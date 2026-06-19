@@ -161,15 +161,23 @@ export async function fetchGithubUser(accessToken: string): Promise<GithubUser> 
   return response.json() as Promise<GithubUser>;
 }
 
-function assertAllowedGithubLogin(login: string) {
-  const allowed = process.env.GITHUB_ALLOWED_LOGIN?.trim();
-  if (allowed && login.toLowerCase() !== allowed.toLowerCase()) {
-    throw new Error('GitHub account is not allowed');
+export function resolveRoleForGithubLogin(login: string): UserRole {
+  const developerLogin =
+    process.env.GITHUB_DEVELOPER_LOGIN?.trim() ||
+    process.env.GITHUB_ALLOWED_LOGIN?.trim();
+
+  if (
+    developerLogin &&
+    login.toLowerCase() === developerLogin.toLowerCase()
+  ) {
+    return 'DEVELOPER';
   }
+
+  return 'USER';
 }
 
 export async function findOrCreateUserFromGithub(githubUser: GithubUser) {
-  assertAllowedGithubLogin(githubUser.login);
+  const role = resolveRoleForGithubLogin(githubUser.login);
 
   const existing = await query<UserRow>(
     `SELECT id, "githubId", "githubLogin", email, role
@@ -179,6 +187,17 @@ export async function findOrCreateUserFromGithub(githubUser: GithubUser) {
   );
 
   if (existing[0]) {
+    if (existing[0].role !== role) {
+      const rows = await query<UserRow>(
+        `UPDATE "User"
+         SET role = $1, "updatedAt" = $2
+         WHERE id = $3
+         RETURNING id, "githubId", "githubLogin", email, role`,
+        [role, new Date(), existing[0].id],
+      );
+      return rows[0];
+    }
+
     return existing[0];
   }
 
@@ -186,9 +205,9 @@ export async function findOrCreateUserFromGithub(githubUser: GithubUser) {
   const now = new Date();
   const rows = await query<UserRow>(
     `INSERT INTO "User" (id, "githubId", "githubLogin", email, role, "createdAt", "updatedAt")
-     VALUES ($1, $2, $3, $4, 'DEVELOPER', $5, $5)
+     VALUES ($1, $2, $3, $4, $5, $6, $6)
      RETURNING id, "githubId", "githubLogin", email, role`,
-    [id, String(githubUser.id), githubUser.login, githubUser.email, now],
+    [id, String(githubUser.id), githubUser.login, githubUser.email, role, now],
   );
 
   return rows[0];
@@ -244,8 +263,12 @@ export async function getUserBySessionToken(token: string | undefined) {
   return toAuthUser(user);
 }
 
-export function canEditProfile(role: UserRole) {
+export function isDeveloperRole(role: UserRole) {
   return role === 'DEVELOPER' || role === 'ADMIN';
+}
+
+export function canEditProfile(role: UserRole) {
+  return isDeveloperRole(role);
 }
 
 export function parseSessionCookie(cookieHeader: string | undefined) {

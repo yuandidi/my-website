@@ -67,7 +67,12 @@ EXCEPTION WHEN duplicate_object THEN NULL;
 END $$;
 
 DO $$ BEGIN
-  CREATE TYPE "UserRole" AS ENUM ('DEVELOPER', 'ADMIN');
+  CREATE TYPE "UserRole" AS ENUM ('USER', 'DEVELOPER', 'ADMIN');
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$ BEGIN
+  ALTER TYPE "UserRole" ADD VALUE IF NOT EXISTS 'USER' BEFORE 'DEVELOPER';
 EXCEPTION WHEN duplicate_object THEN NULL;
 END $$;
 
@@ -76,7 +81,7 @@ CREATE TABLE IF NOT EXISTS "User" (
     "githubId" TEXT NOT NULL,
     "githubLogin" TEXT NOT NULL,
     "email" TEXT,
-    "role" "UserRole" NOT NULL DEFAULT 'DEVELOPER',
+    "role" "UserRole" NOT NULL DEFAULT 'USER',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")

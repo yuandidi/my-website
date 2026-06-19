@@ -44,7 +44,7 @@ export interface PostsQueryParams {
   tag?: string;
 }
 
-export type UserRole = 'DEVELOPER' | 'ADMIN';
+export type UserRole = 'USER' | 'DEVELOPER' | 'ADMIN';
 
 export interface ProfileLink {
   label: string;

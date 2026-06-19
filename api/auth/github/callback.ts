@@ -5,6 +5,7 @@ import {
   fetchGithubUser,
   findOrCreateUserFromGithub,
   getSiteUrlFromHeaders,
+  isDeveloperRole,
   verifyOAuthState,
 } from '../../../lib/auth';
 import { ensureProfileForUser } from '../../../lib/profile-store';
@@ -35,25 +36,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const githubUser = await fetchGithubUser(accessToken);
     const user = await findOrCreateUserFromGithub(githubUser);
 
-    await ensureProfileForUser(user.id, {
-      name: githubUser.name ?? githubUser.login,
-      avatarUrl: githubUser.avatar_url,
-    });
+    if (isDeveloperRole(user.role)) {
+      await ensureProfileForUser(user.id, {
+        name: githubUser.name ?? githubUser.login,
+        avatarUrl: githubUser.avatar_url,
+      });
+    }
 
     const session = await createSession(user.id);
     setSessionCookieHeader(res, session.token, session.maxAge);
 
-    res.status(302).setHeader('Location', `${siteUrl}/profile/edit`).end();
+    const redirectPath = isDeveloperRole(user.role) ? '/profile/edit' : '/profile';
+    res.status(302).setHeader('Location', `${siteUrl}${redirectPath}`).end();
   } catch (error) {
-    const siteUrl = getSiteUrlFromHeaders(
-      req.headers.host,
-      req.headers['x-forwarded-proto'],
-    );
-
-    if (error instanceof Error && error.message.includes('not allowed')) {
-      res.status(302).setHeader('Location', `${siteUrl}/profile?auth=denied`).end();
-      return;
-    }
     serverError(res, error);
   }
 }

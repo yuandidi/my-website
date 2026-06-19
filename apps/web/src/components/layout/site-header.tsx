@@ -11,7 +11,7 @@ interface SiteHeaderProps {
 export function SiteHeader({ className }: SiteHeaderProps) {
   const { data: categories } = useCategories()
   const { pathname } = useLocation()
-  const { user, isDeveloper, login, logout, isLoading } = useAuth()
+  const { user, isLoggedIn, login, logout, isLoading } = useAuth()
   const isProfileRoute =
     pathname === WEB_ROUTES.profile || pathname === WEB_ROUTES.profileEdit
   return (
@@ -70,7 +70,7 @@ export function SiteHeader({ className }: SiteHeaderProps) {
             )
           })}
           {!isLoading && (
-            isDeveloper ? (
+            isLoggedIn ? (
               <Button
                 variant="ghost"
                 size="sm"

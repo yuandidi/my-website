@@ -11,10 +11,10 @@ import { useSiteProfile } from '@/hooks/useSiteProfile'
 import { QueryError } from '@/components/blog/post-list-states'
 
 export function ProfilePage() {
-  const { isDeveloper, login } = useAuth()
+  const { user, isLoggedIn, isDeveloper, login } = useAuth()
   const { data: profile, isLoading, isError, error, refetch } = useSiteProfile()
-  const [searchParams] = useSearchParams()
-  const authDenied = searchParams.get('auth') === 'denied'
+  const [searchParams, setSearchParams] = useSearchParams()
+  const saved = searchParams.get('saved') === '1'
 
   if (isLoading) {
     return (
@@ -49,16 +49,29 @@ export function ProfilePage() {
           <Button asChild variant="outline" size="sm">
             <Link to={WEB_ROUTES.profileEdit}>编辑资料</Link>
           </Button>
-        ) : (
+        ) : !isLoggedIn ? (
           <Button variant="outline" size="sm" onClick={login}>
-            开发者登录
+            GitHub 登录
           </Button>
-        )}
+        ) : null}
       </div>
 
-      {authDenied && (
-        <p className="rounded-none border-2 border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-          当前 GitHub 账号无权登录，请使用已授权的开发者账号。
+      {saved && (
+        <p className="rounded-none border-2 border-primary/40 bg-primary/10 px-3 py-2 text-sm text-primary">
+          资料已保存。
+          <button
+            type="button"
+            className="ml-2 underline"
+            onClick={() => setSearchParams({})}
+          >
+            知道了
+          </button>
+        </p>
+      )}
+
+      {isLoggedIn && !isDeveloper && (
+        <p className="text-sm text-muted-foreground">
+          已以 {user?.githubLogin} 登录
         </p>
       )}
 

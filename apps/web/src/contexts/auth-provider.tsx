@@ -40,6 +40,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     () => ({
       user: data?.user ?? null,
       isLoading,
+      isLoggedIn: Boolean(data?.user),
       isDeveloper:
         data?.user?.role === 'DEVELOPER' || data?.user?.role === 'ADMIN',
       login,
