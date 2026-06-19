@@ -260,6 +260,18 @@ export async function getUserBySessionToken(token: string | undefined) {
   const user = users[0];
   if (!user) return null;
 
+  const expectedRole = resolveRoleForGithubLogin(user.githubLogin);
+  if (user.role !== expectedRole) {
+    const updated = await query<UserRow>(
+      `UPDATE "User"
+       SET role = $1, "updatedAt" = $2
+       WHERE id = $3
+       RETURNING id, "githubId", "githubLogin", email, role`,
+      [expectedRole, new Date(), user.id],
+    );
+    return toAuthUser(updated[0]);
+  }
+
   return toAuthUser(user);
 }
 

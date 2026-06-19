@@ -46,7 +46,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const session = await createSession(user.id);
     setSessionCookieHeader(res, session.token, session.maxAge);
 
-    const redirectPath = isDeveloperRole(user.role) ? '/profile/edit' : '/profile';
+    const redirectPath = '/profile';
     res.status(302).setHeader('Location', `${siteUrl}${redirectPath}`).end();
   } catch (error) {
     serverError(res, error);
