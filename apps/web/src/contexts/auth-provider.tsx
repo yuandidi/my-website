@@ -1,0 +1,52 @@
+import {
+  useCallback,
+  useMemo,
+  type ReactNode,
+} from 'react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { AuthContext, type AuthContextValue } from '@/contexts/auth-context'
+import { api, getGithubLoginUrl } from '@/lib/api'
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const queryClient = useQueryClient()
+  const { data, isLoading } = useQuery({
+    queryKey: ['auth', 'me'],
+    queryFn: async () => {
+      try {
+        return await api.getMe()
+      } catch {
+        return null
+      }
+    },
+    retry: false,
+  })
+
+  const logoutMutation = useMutation({
+    mutationFn: () => api.logout(),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['auth', 'me'] })
+    },
+  })
+
+  const login = useCallback(() => {
+    window.location.href = getGithubLoginUrl()
+  }, [])
+
+  const logout = useCallback(async () => {
+    await logoutMutation.mutateAsync()
+  }, [logoutMutation])
+
+  const value = useMemo<AuthContextValue>(
+    () => ({
+      user: data?.user ?? null,
+      isLoading,
+      isDeveloper:
+        data?.user?.role === 'DEVELOPER' || data?.user?.role === 'ADMIN',
+      login,
+      logout,
+    }),
+    [data?.user, isLoading, login, logout],
+  )
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+}

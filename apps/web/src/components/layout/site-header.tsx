@@ -1,8 +1,9 @@
 import { Link, useLocation } from 'react-router-dom'
 import { WEB_ROUTES } from '@my-blog/shared'
+import { Button } from '@/components/ui/button'
+import { useAuth } from '@/hooks/useAuth'
 import { useCategories } from '@/hooks/usePosts'
 import { cn } from '@/lib/utils'
-
 interface SiteHeaderProps {
   className?: string
 }
@@ -10,7 +11,9 @@ interface SiteHeaderProps {
 export function SiteHeader({ className }: SiteHeaderProps) {
   const { data: categories } = useCategories()
   const { pathname } = useLocation()
-
+  const { user, isDeveloper, login, logout, isLoading } = useAuth()
+  const isProfileRoute =
+    pathname === WEB_ROUTES.profile || pathname === WEB_ROUTES.profileEdit
   return (
     <header
       className={cn(
@@ -46,7 +49,7 @@ export function SiteHeader({ className }: SiteHeaderProps) {
             to={WEB_ROUTES.profile}
             className={cn(
               'fantasy-nav-link',
-              pathname === WEB_ROUTES.profile && 'fantasy-nav-link-active',
+              isProfileRoute && 'fantasy-nav-link-active',
             )}
           >
             关于
@@ -66,6 +69,27 @@ export function SiteHeader({ className }: SiteHeaderProps) {
               </Link>
             )
           })}
+          {!isLoading && (
+            isDeveloper ? (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-auto px-0 py-0 font-medium text-muted-foreground hover:text-gold"
+                onClick={() => logout()}
+              >
+                退出 ({user?.githubLogin})
+              </Button>
+            ) : (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-auto px-0 py-0 font-medium text-muted-foreground hover:text-gold"
+                onClick={login}
+              >
+                登录
+              </Button>
+            )
+          )}
         </nav>
       </div>
       <div className="fantasy-header-ornament h-4 w-full opacity-35" aria-hidden />
