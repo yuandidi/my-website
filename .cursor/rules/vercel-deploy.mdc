@@ -16,7 +16,7 @@ alwaysApply: false
 - API：单一 Route Handler `src/app/api/[[...path]]/route.ts`，分发至 `lib/api-handlers/*`
 - 业务逻辑：`lib/blog.ts`、`lib/db.ts` 等；建表/种子：`lib/setup.ts` + `scripts/`
 - 生产域名：`https://dididi.space`（及 `www.dididi.space`）
-- Vercel 项目：`yuandidis-projects/my-blog`；**Root Directory 应设为 `apps/web`**
+- Vercel 项目：`yuandidis-projects/my-blog`；**Root Directory = `apps/web`**（见 `apps/web/vercel.json`）
 
 ## 环境变量（常见陷阱）
 
