@@ -1,0 +1,17 @@
+{
+  "src": "/site-spirit/walk-left-sheet.png",
+  "frameCount": 8,
+  "sheetWidth": 1024,
+  "sheetHeight": 128,
+  "frameWidth": 128,
+  "frameHeight": 128,
+  "baselineFromCropBottom": 0,
+  "fps": 8,
+  "displayHeight": 88,
+  "crop": {
+    "top": 0,
+    "left": 0,
+    "right": 0,
+    "bottom": 0
+  }
+}

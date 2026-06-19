@@ -1,0 +1,15 @@
+[
+  {
+    "id": "idle",
+    "sourceFile": "idle-sheet.jpg",
+    "frameCount": 4,
+    "sourceCrop": { "top": 69, "left": 0, "right": 0, "bottom": 141 },
+    "frameSplit": "equal",
+    "columnInsetX": 12,
+    "columnBottomTrim": 70,
+    "alphaMode": "purple",
+    "fps": 4,
+    "displayHeight": 88,
+    "minBottomRowSpan": 35
+  }
+]

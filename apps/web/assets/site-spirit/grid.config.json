@@ -1,0 +1,19 @@
+{
+  "sourceFile": "character-grid.jpg",
+  "gridCols": 8,
+  "gridRows": 8,
+  "excludeRows": [7],
+  "alphaMode": "black",
+  "fps": 8,
+  "displayHeight": 88,
+  "minBottomRowSpan": 10,
+  "uniformCellSize": "grid",
+  "states": [
+    { "id": "front-walk", "row": 0, "exportAs": "FRONT_WALK_SPRITE_SHEET" },
+    { "id": "walk-right-staff", "row": 1, "exportAs": "WALK_RIGHT_STAFF_SPRITE_SHEET" },
+    { "id": "walk-back", "row": 2, "exportAs": "WALK_BACK_SPRITE_SHEET" },
+    { "id": "cast-left", "row": 3, "exportAs": "CAST_LEFT_SPRITE_SHEET" },
+    { "id": "knockdown", "row": 4, "exportAs": "KNOCKDOWN_SPRITE_SHEET" },
+    { "id": "walk-left", "row": 6, "exportAs": "WALK_LEFT_SPRITE_SHEET" }
+  ]
+}

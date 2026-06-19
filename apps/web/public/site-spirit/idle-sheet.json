@@ -1,0 +1,17 @@
+{
+  "src": "/site-spirit/idle-sheet.png",
+  "frameCount": 4,
+  "sheetWidth": 928,
+  "sheetHeight": 400,
+  "frameWidth": 232,
+  "frameHeight": 400,
+  "baselineFromCropBottom": 0,
+  "fps": 4,
+  "displayHeight": 88,
+  "crop": {
+    "top": 0,
+    "left": 0,
+    "right": 0,
+    "bottom": 0
+  }
+}
