@@ -1,0 +1,58 @@
+---
+description: my-blog 项目全局约定（monorepo 结构、共享包、开发流程）
+alwaysApply: true
+---
+
+# my-blog 项目全局约定
+
+## 仓库结构
+
+```
+my-blog/
+├── api/               # Vercel Serverless API（生产）
+├── lib/               # 服务端共享逻辑（DB、业务查询）
+├── scripts/           # schema.sql、seed、db-push
+├── apps/web/          # React + Vite 前端
+├── apps/api/          # NestJS（本地参考，生产不依赖）
+├── packages/shared/   # 前后端共享类型与 API 路由常量
+└── vercel.json        # Vercel 构建与路由
+```
+
+## 技术栈
+
+- **包管理**: pnpm workspace，Node >= 20
+- **生产部署**: Vercel（前端 + `/api` Serverless + Postgres）
+- **共享包**: `@my-blog/shared` — 接口类型、`API_ROUTES`、分页结构
+- **本地可选**: Docker Postgres（`pnpm docker:up`）
+
+## 跨端契约
+
+- API 响应类型以 `@my-blog/shared` 为准
+- 路由常量统一在 `packages/shared/src/index.ts` 的 `API_ROUTES` 维护，前后端勿硬编码路径
+- 新增/变更 API 字段时：先改 shared 类型 → 再改 `lib/blog.ts` 与 `api/` handlers → 最后改前端
+
+## 常用命令
+
+```bash
+pnpm dev              # vercel dev（本地全栈）
+pnpm deploy:vercel    # 生产部署前后端
+pnpm build            # 构建 shared + web
+pnpm db:setup         # 建表 + seed（需 POSTGRES_URL）
+pnpm dev:web          # 仅前端
+```
+
+## 改动原则
+
+- **最小范围**：只改与任务相关的文件，不顺手重构
+- **先读再写**：匹配现有模块划分、命名与 import 风格
+- **不提交密钥**：`.env`、凭证文件勿加入版本库
+- **任务完成 SOP**：验证 → 拆分 commit → push（见 `git-pr.mdc`）
+- **软件工程规范**：见 `software-engineering.mdc`
+- **测试规范**：见 `testing.mdc`
+- **Git / PR 规范**：见 `git-pr.mdc`
+
+## 环境
+
+- 生产：前后端同域，`VITE_API_URL=/api`
+- 本地：`vercel dev` 或 `pnpm dev:web` + 本地/云端 Postgres
+- 数据库环境变量：`POSTGRES_URL` 或 `DATABASE_URL`
