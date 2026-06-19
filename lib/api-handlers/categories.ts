@@ -1,8 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import type { CreateCategoryInput, UpdateCategoryInput } from '@my-blog/shared';
-import { listCategories, listCategoryPosts } from '../../lib/blog';
-import { createCategory, deleteCategory, updateCategory } from '../../lib/taxonomy-store';
-import { hasCategoryUpdates } from '../../lib/post-validation';
+import { listCategories, listCategoryPosts } from '../blog';
+import { createCategory, deleteCategory, updateCategory } from '../taxonomy-store';
+import { hasCategoryUpdates } from '../post-validation';
 import {
   badRequest,
   getQueryNumber,
@@ -11,12 +11,13 @@ import {
   requireDeveloper,
   withGet,
   withMethods,
-} from '../../lib/http';
-import { getPathSegments } from '../../lib/vercel-route';
+} from '../http';
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
-  const segments = getPathSegments(req.query);
-
+export async function handleCategoriesRoute(
+  req: VercelRequest,
+  res: VercelResponse,
+  segments: string[],
+) {
   if (segments.length === 0) {
     await withMethods(req, res, {
       GET: async () => listCategories(),

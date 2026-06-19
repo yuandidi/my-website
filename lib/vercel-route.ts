@@ -10,5 +10,22 @@ export function getPathSegments(
     return [];
   }
 
-  return (Array.isArray(raw) ? raw : [raw]).map((segment) => String(segment));
+  return (Array.isArray(raw) ? raw : [raw])
+    .flatMap((segment) => String(segment).split('/'))
+    .filter(Boolean);
+}
+
+export function getRouteSegments(req: VercelRequest): string[] {
+  const fromQuery = getPathSegments(req.query, 'route');
+  if (fromQuery.length > 0) {
+    return fromQuery;
+  }
+
+  const pathname = (req.url ?? '').split('?')[0] ?? '';
+  const match = pathname.match(/^\/api\/(.+)$/);
+  if (!match?.[1]) {
+    return [];
+  }
+
+  return match[1].split('/').filter(Boolean);
 }

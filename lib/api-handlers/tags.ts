@@ -1,8 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import type { CreateTagInput, UpdateTagInput } from '@my-blog/shared';
-import { listTagPosts, listTags } from '../../lib/blog';
-import { createTag, deleteTag, updateTag } from '../../lib/taxonomy-store';
-import { hasTagUpdates } from '../../lib/post-validation';
+import { listTagPosts, listTags } from '../blog';
+import { createTag, deleteTag, updateTag } from '../taxonomy-store';
+import { hasTagUpdates } from '../post-validation';
 import {
   badRequest,
   getQueryNumber,
@@ -11,12 +11,13 @@ import {
   requireDeveloper,
   withGet,
   withMethods,
-} from '../../lib/http';
-import { getPathSegments } from '../../lib/vercel-route';
+} from '../http';
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
-  const segments = getPathSegments(req.query);
-
+export async function handleTagsRoute(
+  req: VercelRequest,
+  res: VercelResponse,
+  segments: string[],
+) {
   if (segments.length === 0) {
     await withMethods(req, res, {
       GET: async () => listTags(),

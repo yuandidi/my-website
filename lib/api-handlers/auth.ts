@@ -12,8 +12,8 @@ import {
   isDeveloperRole,
   parseSessionCookie,
   verifyOAuthState,
-} from '../../lib/auth';
-import { ensureProfileForUser } from '../../lib/profile-store';
+} from '../auth';
+import { ensureProfileForUser } from '../profile-store';
 import {
   clearSessionCookieHeader,
   getAuthUser,
@@ -24,11 +24,14 @@ import {
   setSessionCookieHeader,
   unauthorized,
   withMethods,
-} from '../../lib/http';
-import { getPathSegments } from '../../lib/vercel-route';
+} from '../http';
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
-  const route = getPathSegments(req.query).join('/');
+export async function handleAuthRoute(
+  req: VercelRequest,
+  res: VercelResponse,
+  segments: string[],
+) {
+  const route = segments.join('/');
 
   if (route === 'github' && req.method === 'GET') {
     try {

@@ -1,14 +1,14 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import type { CreatePostInput, UpdatePostInput } from '@my-blog/shared';
-import { getPostBySlug, listPosts } from '../../lib/blog';
+import { getPostBySlug, listPosts } from '../blog';
 import {
   createPost,
   deletePost,
   getAdminPostBySlug,
   listAdminPosts,
   updatePost,
-} from '../../lib/post-store';
-import { hasPostUpdates } from '../../lib/post-validation';
+} from '../post-store';
+import { hasPostUpdates } from '../post-validation';
 import {
   badRequest,
   getAuthUser,
@@ -18,20 +18,13 @@ import {
   parseJsonBody,
   requireDeveloper,
   withMethods,
-} from '../../lib/http';
-import { getPathSegments } from '../../lib/vercel-route';
+} from '../http';
 
-export const config = {
-  api: {
-    bodyParser: {
-      sizeLimit: '2mb',
-    },
-  },
-};
-
-export default async function handler(req: VercelRequest, res: VercelResponse) {
-  const segments = getPathSegments(req.query);
-
+export async function handlePostsRoute(
+  req: VercelRequest,
+  res: VercelResponse,
+  segments: string[],
+) {
   if (segments.length === 0) {
     await withMethods(req, res, {
       GET: async () => {
