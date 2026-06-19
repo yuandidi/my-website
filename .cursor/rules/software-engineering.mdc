@@ -1,0 +1,54 @@
+---
+description: 软件工程通用最佳实践（设计、质量、测试、安全、可维护性）
+alwaysApply: true
+---
+
+# 软件工程最佳实践
+
+## 设计原则
+
+- **YAGNI / KISS**：只实现当前需求；能用简单方案解决的，不加抽象层
+- **单一职责**：一个模块/函数只做一件事；Controller 不查库、组件不拼 URL
+- **显式优于隐式**：类型、错误、边界条件写清楚，避免魔法值和隐式副作用
+- **依赖方向**：`shared` ← `api` / `web`；业务层不反向依赖 UI 或 HTTP 框架细节
+
+## 代码质量
+
+- **先读再改**：复用现有函数、模式与命名，改动应像同一作者所写
+- **小步提交思维**：即使不 commit，每次改动也应聚焦、可审查、可回滚
+- **命名即文档**：`findPublishedPostsBySlug` 优于 `getData`；布尔值用 `is/has/can` 前缀
+- **拒绝空 catch**：捕获异常必须记录上下文并重新抛出或转为明确错误类型
+- **注释写 why**：代码解释 what；仅对非显而易见的业务规则或权衡加注释
+
+## 测试
+
+- **测行为不测实现**；详细分层、命名、Mock 策略见 `testing.mdc`
+
+## 安全
+
+- 密钥、Token、`.env` 不入库；环境变量通过 ConfigModule / `import.meta.env` 读取
+- 所有外部输入必须校验（后端 DTO + ValidationPipe；前端不替代服务端校验）
+- 公开 API 仅暴露已发布内容；错误信息不泄露堆栈或 SQL
+- 用户生成内容渲染时防 XSS（Markdown 用受信渲染链路）
+
+## 错误与可观测性
+
+- 失败要**快速、明确**：404 用 `NotFoundException`，400 用校验错误，避免吞掉后返回 200
+- 前端区分 loading / error / empty / success，给用户可理解的反馈
+- 不在生产代码留 `console.log` 调试；需要时用结构化日志（后端 Nest Logger）
+
+## 变更与契约
+
+- **API 契约**：字段变更走 shared → mapper/DTO → 前端；避免破坏性改动
+- **数据库**：Schema 变更必须可迁移；破坏性迁移需说明并更新 seed
+- **依赖**：优先用项目已有库；新增依赖需有明确理由
+
+## 交付检查
+
+改动完成后应能通过这些门禁（相关部分）：
+
+```bash
+pnpm --filter api lint && pnpm --filter api test
+pnpm --filter web lint && pnpm --filter web build
+pnpm build   # 全量构建（含 shared）
+```

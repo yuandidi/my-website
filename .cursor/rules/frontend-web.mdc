@@ -1,0 +1,72 @@
+---
+description: React + Vite 前端约定（路由、React Query、API 层、UI）
+globs: apps/web/**/*
+alwaysApply: false
+---
+
+# 前端 Web 约定（apps/web）
+
+## 技术栈
+
+- React 19 函数组件 + TypeScript + Vite 8（ESM）
+- React Router 7 路由；TanStack Query 5 服务端状态
+- Tailwind CSS 4 + `components/ui/`（shadcn 风格）；`cn()` 来自 `@/lib/utils`
+
+## 分层架构（关注点分离）
+
+```
+pages/        # 路由页面，组合组件与 hooks
+components/   # 展示组件（blog/ layout/ ui/）
+hooks/        # React Query hooks，封装数据获取
+lib/api.ts    # 唯一 HTTP 入口，组件/hooks 不直接 fetch
+lib/utils.ts  # 纯工具函数
+```
+
+**数据流**：Page → Hook → `api` → 后端。UI 组件不持有 API 细节。
+
+## API 层
+
+- 所有请求经 `lib/api.ts` 的 `request<T>()`，统一错误处理（`response.ok` 检查）
+- 路径用 `@my-blog/shared` 的 `API_ROUTES`；类型用 shared 导出类型
+- Base URL：`import.meta.env.VITE_API_URL ?? '/api'`
+
+```typescript
+// ✅ hooks 中
+export function usePost(slug: string) {
+  return useQuery({
+    queryKey: ['post', slug],
+    queryFn: () => api.getPost(slug),
+    enabled: Boolean(slug),
+  })
+}
+```
+
+## React Query 约定
+
+- `queryKey` 含资源名与参数（如 `['posts', params]`），保证缓存隔离
+- 依赖路由参数的查询设置 `enabled: Boolean(slug)` 避免空请求
+- `staleTime` 参考现有 hooks（列表 5min、详情 10min、分类/标签 30min）
+- 变更/删除操作后用 `queryClient.invalidateQueries` 刷新（引入 mutation 时）
+
+## 组件与 UX
+
+- 页面必须处理 **loading / error / empty / success** 四态（参考 `post-list-states.tsx`）
+- 副作用放 hook 或 `useEffect`，不在 render 中发起请求
+- 可访问性：语义 HTML、键盘可达、`alt` 文本、装饰图标 `aria-hidden`
+- 外链 `target="_blank"` 配合 `rel="noopener noreferrer"`
+
+## 样式
+
+- 优先 Tailwind utility；复用 `components/ui/` 基础组件
+-  prose 内容区用 `@tailwindcss/typography`；Markdown 用 `react-markdown` + `remark-gfm`
+
+## 测试与质量
+
+- Vitest + Testing Library 约定见 `testing.mdc`
+- 不重新定义 shared 已有类型；props 类型尽量从 shared 推导
+
+## 禁止
+
+- 组件/page 内硬编码 API 路径或直接 `fetch`
+- 在 UI 层散落重复的数据获取逻辑（应提取 hook）
+- 直接 mutate state/props；忽略 error 态静默失败

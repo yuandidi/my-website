@@ -1,0 +1,96 @@
+---
+description: 测试规范（单元/集成/E2E、命名、Mock、覆盖率）
+globs: "{apps,packages}/**/*"
+alwaysApply: false
+---
+
+# 测试规范
+
+## 测试金字塔
+
+```
+E2E（少量）  ← HTTP 全链路、关键用户路径
+集成（适量）  ← 模块协作、DB/缓存边界
+单元（主力）  ← Service、mapper、纯函数、hooks
+```
+
+优先用单元测试覆盖业务规则；E2E 验证契约与回归，不替代单元测试。
+
+## 何时必须补测试
+
+| 场景 | 要求 |
+|------|------|
+| 修复 bug | 先写失败用例，再修复 |
+| Service / mapper / DTO 校验 | 单元测试 |
+| 新增公开 API | E2E 或集成测试 |
+| `lib/` 纯函数、shared 工具 | 单元测试 |
+| 纯 UI 样式调整 | 可不测 |
+
+用户未要求时，不为 trivial 代码堆砌测试。
+
+## 后端（apps/api）
+
+**框架**：Jest + `@nestjs/testing` + supertest
+
+| 类型 | 文件位置 | 命令 |
+|------|----------|------|
+| 单元 | `src/**/*.spec.ts`（与源文件同目录） | `pnpm --filter api test` |
+| E2E | `test/**/*.e2e-spec.ts` | `pnpm --filter api test:e2e` |
+
+```typescript
+// Service 单元测试：mock 基础设施
+const prisma = { post: { findMany: jest.fn(), count: jest.fn() } };
+const cache = { wrap: jest.fn((_k, _t, fn) => fn()) };
+
+// E2E：复刻 main.ts 配置（prefix、ValidationPipe）
+app.setGlobalPrefix('api');
+app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
+```
+
+- Mock `PrismaService` / `CacheService`，不断言 Prisma 调用次数除非必要
+- E2E 断言 HTTP 状态码 + 响应结构（对齐 `@my-blog/shared` 类型）
+- E2E 需 DB/Redis 时先 `pnpm docker:up`；CI 中用 test 数据库
+
+## 前端（apps/web）
+
+**推荐栈**（引入测试时）：Vitest + `@testing-library/react` + jsdom
+
+| 类型 | 测什么 | 不测什么 |
+|------|--------|----------|
+| 单元 | `lib/utils.ts`、`lib/api.ts` 错误分支 | CSS 类名、内部 state 结构 |
+| Hook | `hooks/usePosts.ts` 加载/错误/空数据 | React Query 内部实现 |
+| 组件 | 用户可见文本、链接、四态渲染 | 快照泛滥 |
+
+- API mock 优先 mock `lib/api` 模块，或 MSW 拦截 HTTP
+- 用 `QueryClientProvider` 包裹需 React Query 的测试
+- 查询用 `screen.getByRole` / `getByText`，避免 `container.querySelector`
+
+## shared（packages/shared）
+
+- 类型与常量通常不需测试
+- 若新增运行时逻辑（格式化、校验函数），在 `src/**/*.spec.ts` 用 Vitest/Jest 覆盖
+
+## 用例结构
+
+```typescript
+describe('PostsService.findAll', () => {
+  it('returns paginated published posts for category filter', async () => {
+    // Arrange
+    prisma.post.findMany.mockResolvedValue([mockPost]);
+    // Act
+    const result = await service.findAll({ category: 'tech', page: 1 });
+    // Assert
+    expect(result.meta.total).toBe(1);
+    expect(result.data[0].slug).toBe('hello');
+  });
+});
+```
+
+- 命名：`describe` 写被测单元，`it` 写行为预期（should ... when ...）
+- 每个测试独立，不依赖执行顺序
+- 禁止 `it.only` / `describe.only` 提交入库
+
+## 覆盖率
+
+- 不追求 100%；重点覆盖分支与边界（空列表、404、非法参数）
+- 查看覆盖率：`pnpm --filter api test:cov`
