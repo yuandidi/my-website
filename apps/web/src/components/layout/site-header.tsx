@@ -14,7 +14,7 @@ interface SiteHeaderProps {
 
 export function SiteHeader({ className }: SiteHeaderProps) {
   const { data: siteMeta } = useSiteMeta()
-  const categories = siteMeta?.categories
+  const tags = siteMeta?.tags
   const pathname = usePathname()
   const { user, isLoggedIn, login, logout, isLoading, isDeveloper } = useAuth()
   const isProfileRoute =
@@ -72,18 +72,29 @@ export function SiteHeader({ className }: SiteHeaderProps) {
               文章
             </Link>
           )}
-          {categories?.map((category) => {
-            const href = WEB_ROUTES.category(category.slug)
+          <Link
+            href={WEB_ROUTES.blog}
+            className={cn(
+              'fantasy-nav-link',
+              pathname === WEB_ROUTES.blog && 'fantasy-nav-link-active',
+            )}
+          >
+            Blog
+          </Link>
+          {tags
+            ?.filter((tag) => tag.slug !== 'blog')
+            .map((tag) => {
+            const href = WEB_ROUTES.tag(tag.slug)
             return (
               <Link
-                key={category.id}
+                key={tag.id}
                 href={href}
                 className={cn(
                   'fantasy-nav-link',
                   pathname === href && 'fantasy-nav-link-active',
                 )}
               >
-                {category.name}
+                {tag.name}
               </Link>
             )
           })}

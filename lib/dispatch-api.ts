@@ -1,6 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { handleAuthRoute } from './api-handlers/auth'
-import { handleCategoriesRoute } from './api-handlers/categories'
 import { handleHealthRoute } from './api-handlers/health'
 import { handlePostsRoute } from './api-handlers/posts'
 import { handleProfileRoute } from './api-handlers/profile'
@@ -32,9 +31,6 @@ export async function dispatchApiRoute(
       return
     case 'posts':
       await handlePostsRoute(req, res, rest)
-      return
-    case 'categories':
-      await handleCategoriesRoute(req, res, rest)
       return
     case 'tags':
       await handleTagsRoute(req, res, rest)

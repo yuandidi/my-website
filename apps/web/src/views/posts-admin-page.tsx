@@ -13,22 +13,15 @@ import {
   usePostMutations,
   useTaxonomyMutations,
 } from '@/hooks/useAdminPosts'
-import { useCategories, useTags } from '@/hooks/usePosts'
+import { useTags } from '@/hooks/usePosts'
 
 export function PostsAdminPage() {
   const { isDeveloper, isLoading: authLoading, login } = useAuth()
   const { data: posts, isLoading: postsLoading } = useAdminPosts({ page: 1, limit: 50 })
-  const { data: categories } = useCategories()
   const { data: tags } = useTags()
   const { deletePost } = usePostMutations()
-  const {
-    createCategory,
-    deleteCategory,
-    createTag,
-    deleteTag,
-  } = useTaxonomyMutations()
+  const { createTag, deleteTag } = useTaxonomyMutations()
 
-  const [categoryName, setCategoryName] = useState('')
   const [tagName, setTagName] = useState('')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
@@ -47,21 +40,6 @@ export function PostsAdminPage() {
           </Button>
         </div>
       </div>
-    )
-  }
-
-  function handleCreateCategory() {
-    const name = categoryName.trim()
-    if (!name) return
-
-    createCategory.mutate(
-      { name },
-      {
-        onSuccess: () => setCategoryName(''),
-        onError: (error) => {
-          setErrorMessage(error instanceof Error ? error.message : '创建分类失败')
-        },
-      },
     )
   }
 
@@ -88,7 +66,7 @@ export function PostsAdminPage() {
             文章管理
           </h1>
           <p className="mt-3 text-sm text-muted-foreground">
-            管理文章、分类与标签。仅开发者可见。
+            管理文章与标签。仅开发者可见。
           </p>
         </div>
         <Button asChild>
@@ -141,99 +119,51 @@ export function PostsAdminPage() {
         )}
       </FantasyScroll>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <FantasyScroll innerClassName="space-y-4">
-          <h2 className="text-lg font-semibold text-gold">分类</h2>
-          <div className="flex gap-2">
-            <Input
-              placeholder="新分类名称"
-              value={categoryName}
-              onChange={(event) => setCategoryName(event.target.value)}
-            />
-            <Button
-              type="button"
-              disabled={createCategory.isPending}
-              onClick={handleCreateCategory}
+      <FantasyScroll innerClassName="space-y-4">
+        <h2 className="text-lg font-semibold text-gold">标签</h2>
+        <div className="flex gap-2">
+          <Input
+            placeholder="新标签名称"
+            value={tagName}
+            onChange={(event) => setTagName(event.target.value)}
+          />
+          <Button
+            type="button"
+            disabled={createTag.isPending}
+            onClick={handleCreateTag}
+          >
+            添加
+          </Button>
+        </div>
+        <div className="space-y-2">
+          {tags?.map((tag) => (
+            <div
+              key={tag.id}
+              className="flex items-center justify-between gap-2 text-sm"
             >
-              添加
-            </Button>
-          </div>
-          <div className="space-y-2">
-            {categories?.map((category) => (
-              <div
-                key={category.id}
-                className="flex items-center justify-between gap-2 text-sm"
+              <span>
+                {tag.name}{' '}
+                <span className="text-muted-foreground">/{tag.slug}</span>
+              </span>
+              <Button
+                variant="ghost"
+                size="sm"
+                disabled={deleteTag.isPending}
+                onClick={() => {
+                  if (window.confirm(`确定删除标签「${tag.name}」？`)) {
+                    deleteTag.mutate(tag.slug)
+                  }
+                }}
               >
-                <span>
-                  {category.name}{' '}
-                  <span className="text-muted-foreground">/{category.slug}</span>
-                </span>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  disabled={deleteCategory.isPending}
-                  onClick={() => {
-                    if (window.confirm(`确定删除分类「${category.name}」？`)) {
-                      deleteCategory.mutate(category.slug)
-                    }
-                  }}
-                >
-                  删除
-                </Button>
-              </div>
-            ))}
-            {!categories?.length && (
-              <p className="text-sm text-muted-foreground">暂无分类</p>
-            )}
-          </div>
-        </FantasyScroll>
-
-        <FantasyScroll innerClassName="space-y-4">
-          <h2 className="text-lg font-semibold text-gold">标签</h2>
-          <div className="flex gap-2">
-            <Input
-              placeholder="新标签名称"
-              value={tagName}
-              onChange={(event) => setTagName(event.target.value)}
-            />
-            <Button
-              type="button"
-              disabled={createTag.isPending}
-              onClick={handleCreateTag}
-            >
-              添加
-            </Button>
-          </div>
-          <div className="space-y-2">
-            {tags?.map((tag) => (
-              <div
-                key={tag.id}
-                className="flex items-center justify-between gap-2 text-sm"
-              >
-                <span>
-                  {tag.name}{' '}
-                  <span className="text-muted-foreground">/{tag.slug}</span>
-                </span>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  disabled={deleteTag.isPending}
-                  onClick={() => {
-                    if (window.confirm(`确定删除标签「${tag.name}」？`)) {
-                      deleteTag.mutate(tag.slug)
-                    }
-                  }}
-                >
-                  删除
-                </Button>
-              </div>
-            ))}
-            {!tags?.length && (
-              <p className="text-sm text-muted-foreground">暂无标签</p>
-            )}
-          </div>
-        </FantasyScroll>
-      </div>
+                删除
+              </Button>
+            </div>
+          ))}
+          {!tags?.length && (
+            <p className="text-sm text-muted-foreground">暂无标签</p>
+          )}
+        </div>
+      </FantasyScroll>
 
       {errorMessage && (
         <p className="text-sm text-destructive">{errorMessage}</p>

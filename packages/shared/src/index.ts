@@ -1,9 +1,3 @@
-export interface Category {
-  id: string;
-  name: string;
-  slug: string;
-}
-
 export interface Tag {
   id: string;
   name: string;
@@ -17,7 +11,6 @@ export interface PostSummary {
   excerpt: string | null;
   coverImage: string | null;
   publishedAt: string | null;
-  category: Category | null;
   tags: Tag[];
 }
 
@@ -35,7 +28,6 @@ export interface AdminPostSummary extends PostSummary {
 
 export interface AdminPostDetail extends PostDetail {
   status: PostStatus;
-  categoryId: string | null;
   tagIds: string[];
 }
 
@@ -46,7 +38,6 @@ export interface CreatePostInput {
   content: string;
   coverImage?: string | null;
   status?: PostStatus;
-  categoryId?: string | null;
   tagIds?: string[];
 }
 
@@ -57,18 +48,7 @@ export interface UpdatePostInput {
   content?: string;
   coverImage?: string | null;
   status?: PostStatus;
-  categoryId?: string | null;
   tagIds?: string[];
-}
-
-export interface CreateCategoryInput {
-  name: string;
-  slug?: string;
-}
-
-export interface UpdateCategoryInput {
-  name?: string;
-  slug?: string;
 }
 
 export interface CreateTagInput {
@@ -94,7 +74,6 @@ export interface PaginatedResponse<T> {
 export interface PostsQueryParams {
   page?: number;
   limit?: number;
-  category?: string;
   tag?: string;
 }
 
@@ -127,7 +106,7 @@ export interface MeResponse {
 
 export interface SiteMetaResponse {
   user: AuthUser | null;
-  categories: Category[];
+  tags: Tag[];
 }
 
 export interface UpdateProfileInput {
@@ -143,9 +122,6 @@ export const API_ROUTES = {
   posts: '/posts',
   postsAdmin: '/posts/admin',
   postBySlug: (slug: string) => `/posts/${slug}`,
-  categories: '/categories',
-  categoryBySlug: (slug: string) => `/categories/${slug}`,
-  categoryPosts: (slug: string) => `/categories/${slug}/posts`,
   tags: '/tags',
   tagBySlug: (slug: string) => `/tags/${slug}`,
   tagPosts: (slug: string) => `/tags/${slug}/posts`,
@@ -160,25 +136,23 @@ export const API_ROUTES = {
   },
 } as const;
 
-/** 前端页面路由（React Router），与 API 路径分离 */
+/** 前端页面路由，与 API 路径分离 */
 export const WEB_ROUTES = {
   home: '/',
+  blog: '/blog',
   profile: '/profile',
   profileEdit: '/profile/edit',
   postsAdmin: '/admin/posts',
   postNew: '/admin/posts/new',
   postEdit: (slug: string) => `/admin/posts/${slug}/edit`,
   post: (slug: string) => `/posts/${slug}`,
-  category: (slug: string) => `/categories/${slug}`,
   tag: (slug: string) => `/tags/${slug}`,
 } as const;
 
 export { validateUpdateProfileInput } from './profile-validation';
 export {
-  validateCreateCategoryInput,
   validateCreatePostInput,
   validateCreateTagInput,
-  validateUpdateCategoryInput,
   validateUpdatePostInput,
   validateUpdateTagInput,
 } from './post-validation';

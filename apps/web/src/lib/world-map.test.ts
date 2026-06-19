@@ -12,7 +12,7 @@ describe('world-map', () => {
     expect(getHotspotHref(hut!)).toBe('/profile')
   })
 
-  it('has no region hotspots until categories are configured', () => {
+  it('has no region hotspots until tags are configured', () => {
     expect(getRegionHotspots()).toEqual([])
   })
 

@@ -29,10 +29,9 @@ export async function handlePostsRoute(
       GET: async () => {
         const page = getQueryNumber(req.query.page, 1);
         const limit = getQueryNumber(req.query.limit, 10);
-        const category = getQueryString(req.query.category);
         const tag = getQueryString(req.query.tag);
 
-        return listPosts({ page, limit, category, tag });
+        return listPosts({ page, limit, tag });
       },
       POST: async () => {
         await requireDeveloper(req);

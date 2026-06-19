@@ -59,11 +59,6 @@ export function PostDetailPage({ slug }: PostDetailPageProps) {
       <FantasyScroll innerClassName="space-y-6">
         <div className="space-y-4">
           <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-            {post.category && (
-              <Link href={WEB_ROUTES.category(post.category.slug)}>
-                <Badge variant="guild">{post.category.name}</Badge>
-              </Link>
-            )}
             {post.publishedAt && <span>{formatDate(post.publishedAt)}</span>}
           </div>
           <h1 className="font-display text-4xl leading-tight text-gold">

@@ -7,28 +7,20 @@ import {
   QueryError,
 } from '@/components/blog/post-list-states'
 import { Pagination } from '@/components/blog/pagination'
-import { useCategories, useCategoryPosts } from '@/hooks/usePosts'
+import { usePosts } from '@/hooks/usePosts'
 
-interface CategoryPageProps {
-  slug: string
-}
-
-export function CategoryPage({ slug }: CategoryPageProps) {
+export function BlogPage() {
   const [page, setPage] = useState(1)
-  const { data: categories } = useCategories()
-  const { data, isLoading, isError, error, refetch } = useCategoryPosts(slug, {
+  const { data, isLoading, isError, error, refetch } = usePosts({
     page,
     limit: 6,
   })
-
-  const categoryName =
-    categories?.find((category) => category.slug === slug)?.name ?? slug
 
   return (
     <div className="mx-auto max-w-3xl space-y-6 px-4 py-8">
       <div>
         <h1 className="fantasy-section-divider text-3xl font-bold text-gold">
-          分类：{categoryName}
+          Blog
         </h1>
       </div>
 

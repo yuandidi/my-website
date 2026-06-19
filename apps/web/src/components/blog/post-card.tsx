@@ -24,11 +24,6 @@ export function PostCard({ post }: PostCardProps) {
     <FantasyScroll className="transition-shadow hover:shadow-lg hover:shadow-primary/10">
       <div className="space-y-3">
         <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-          {post.category && (
-            <Link href={WEB_ROUTES.category(post.category.slug)}>
-              <Badge variant="guild">{post.category.name}</Badge>
-            </Link>
-          )}
           {post.publishedAt && <span>{formatDate(post.publishedAt)}</span>}
         </div>
         <h2 className="font-display text-xl leading-snug">

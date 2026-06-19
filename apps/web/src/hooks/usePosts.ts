@@ -19,23 +19,6 @@ export function usePost(slug: string) {
   })
 }
 
-export function useCategories() {
-  return useQuery({
-    queryKey: ['categories'],
-    queryFn: () => api.getCategories(),
-    staleTime: 30 * 60 * 1000,
-  })
-}
-
-export function useCategoryPosts(slug: string, params?: PostsQueryParams) {
-  return useQuery({
-    queryKey: ['category-posts', slug, params],
-    queryFn: () => api.getCategoryPosts(slug, params),
-    staleTime: 5 * 60 * 1000,
-    enabled: Boolean(slug),
-  })
-}
-
 export function useTags() {
   return useQuery({
     queryKey: ['tags'],

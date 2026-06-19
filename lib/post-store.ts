@@ -23,15 +23,6 @@ function mapTags(value: unknown): Tag[] {
 }
 
 function mapAdminPostSummary(row: Record<string, unknown>): AdminPostSummary {
-  const category =
-    row.category_id && row.category_name && row.category_slug
-      ? {
-          id: String(row.category_id),
-          name: String(row.category_name),
-          slug: String(row.category_slug),
-        }
-      : null;
-
   return {
     id: String(row.id),
     title: String(row.title),
@@ -42,7 +33,6 @@ function mapAdminPostSummary(row: Record<string, unknown>): AdminPostSummary {
       ? new Date(String(row.publishedAt)).toISOString()
       : null,
     status: String(row.status) as PostStatus,
-    category,
     tags: mapTags(row.tags),
   };
 }
@@ -59,7 +49,6 @@ function mapAdminPostDetail(row: Record<string, unknown>): AdminPostDetail {
     content: String(row.content),
     createdAt: new Date(String(row.createdAt)).toISOString(),
     updatedAt: new Date(String(row.updatedAt)).toISOString(),
-    categoryId: row.categoryId ? String(row.categoryId) : null,
     tagIds,
   };
 }
@@ -73,12 +62,8 @@ const adminPostSelect = `
   p."coverImage",
   p."publishedAt",
   p.status,
-  p."categoryId",
   p."createdAt",
   p."updatedAt",
-  c.id as category_id,
-  c.name as category_name,
-  c.slug as category_slug,
   COALESCE(
     json_agg(
       json_build_object('id', t.id, 'name', t.name, 'slug', t.slug)
@@ -93,7 +78,6 @@ const adminPostSelect = `
 
 const adminPostFrom = `
   FROM "Post" p
-  LEFT JOIN "Category" c ON p."categoryId" = c.id
   LEFT JOIN "PostTag" pt ON pt."postId" = p.id
   LEFT JOIN "Tag" t ON t.id = pt."tagId"
 `;
@@ -110,7 +94,7 @@ export function slugifyName(value: string) {
 }
 
 async function ensureUniqueSlug(
-  table: 'Post' | 'Category' | 'Tag',
+  table: 'Post' | 'Tag',
   baseSlug: string,
   excludeId?: string,
 ) {
@@ -140,7 +124,7 @@ async function fetchAdminPostById(id: string): Promise<AdminPostDetail> {
     SELECT ${adminPostSelect}
     ${adminPostFrom}
     WHERE p.id = $1
-    GROUP BY p.id, c.id
+    GROUP BY p.id
     LIMIT 1
     `,
     [id],
@@ -159,7 +143,7 @@ async function fetchAdminPostBySlug(slug: string): Promise<AdminPostDetail> {
     SELECT ${adminPostSelect}
     ${adminPostFrom}
     WHERE p.slug = $1
-    GROUP BY p.id, c.id
+    GROUP BY p.id
     LIMIT 1
     `,
     [slug],
@@ -170,21 +154,6 @@ async function fetchAdminPostBySlug(slug: string): Promise<AdminPostDetail> {
   }
 
   return mapAdminPostDetail(rows[0]);
-}
-
-async function assertCategoryExists(categoryId: string | null | undefined) {
-  if (!categoryId) {
-    return;
-  }
-
-  const rows = await query<{ id: string }>(
-    `SELECT id FROM "Category" WHERE id = $1 LIMIT 1`,
-    [categoryId],
-  );
-
-  if (!rows[0]) {
-    throw new Error(`Category "${categoryId}" not found`);
-  }
 }
 
 async function assertTagsExist(tagIds: string[] | undefined) {
@@ -250,7 +219,7 @@ export async function listAdminPosts(options: {
     `
     SELECT ${adminPostSelect}
     ${adminPostFrom}
-    GROUP BY p.id, c.id
+    GROUP BY p.id
     ORDER BY p."updatedAt" DESC
     LIMIT $1 OFFSET $2
     `,
@@ -281,7 +250,6 @@ export async function createPost(input: CreatePostInput) {
   const baseSlug = input.slug?.trim() || slugifyName(title);
   const slug = await ensureUniqueSlug('Post', baseSlug);
 
-  await assertCategoryExists(input.categoryId ?? null);
   await assertTagsExist(input.tagIds);
 
   const id = randomUUID();
@@ -304,7 +272,7 @@ export async function createPost(input: CreatePostInput) {
       input.coverImage?.trim() || null,
       publishedAt,
       status,
-      input.categoryId ?? null,
+      null,
       now,
       now,
     ],
@@ -332,10 +300,6 @@ export async function updatePost(slug: string, input: UpdatePostInput) {
   }
 
   const current = currentRows[0];
-
-  if (input.categoryId !== undefined) {
-    await assertCategoryExists(input.categoryId);
-  }
 
   if (input.tagIds !== undefined) {
     await assertTagsExist(input.tagIds);
@@ -386,11 +350,6 @@ export async function updatePost(slug: string, input: UpdatePostInput) {
     );
     fields.push(`"publishedAt" = $${index++}`);
     values.push(publishedAt);
-  }
-
-  if (input.categoryId !== undefined) {
-    fields.push(`"categoryId" = $${index++}`);
-    values.push(input.categoryId);
   }
 
   if (fields.length > 0) {

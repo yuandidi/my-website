@@ -1,5 +1,4 @@
 import type {
-  Category,
   PaginatedResponse,
   PostDetail,
   PostSummary,
@@ -16,15 +15,6 @@ function mapTags(value: unknown): Tag[] {
 }
 
 function mapPostSummary(row: Record<string, unknown>): PostSummary {
-  const category =
-    row.category_id && row.category_name && row.category_slug
-      ? {
-          id: String(row.category_id),
-          name: String(row.category_name),
-          slug: String(row.category_slug),
-        }
-      : null;
-
   return {
     id: String(row.id),
     title: String(row.title),
@@ -34,7 +24,6 @@ function mapPostSummary(row: Record<string, unknown>): PostSummary {
     publishedAt: row.publishedAt
       ? new Date(String(row.publishedAt)).toISOString()
       : null,
-    category,
     tags: mapTags(row.tags),
   };
 }
@@ -60,9 +49,6 @@ const postSelect = `
   p."publishedAt",
   p."createdAt",
   p."updatedAt",
-  c.id as category_id,
-  c.name as category_name,
-  c.slug as category_slug,
   COALESCE(
     json_agg(
       json_build_object('id', t.id, 'name', t.name, 'slug', t.slug)
@@ -73,22 +59,13 @@ const postSelect = `
 
 const postFrom = `
   FROM "Post" p
-  LEFT JOIN "Category" c ON p."categoryId" = c.id
   LEFT JOIN "PostTag" pt ON pt."postId" = p.id
   LEFT JOIN "Tag" t ON t.id = pt."tagId"
 `;
 
-function buildFilters(options: {
-  categorySlug?: string;
-  tagSlug?: string;
-}) {
+function buildFilters(options: { tagSlug?: string }) {
   const filters = [publishedClause];
   const params: string[] = [];
-
-  if (options.categorySlug) {
-    params.push(options.categorySlug);
-    filters.push(`c.slug = $${params.length}`);
-  }
 
   if (options.tagSlug) {
     params.push(options.tagSlug);
@@ -106,12 +83,11 @@ function buildFilters(options: {
 async function queryPosts(options: {
   page: number;
   limit: number;
-  categorySlug?: string;
   tagSlug?: string;
 }): Promise<PaginatedResponse<PostSummary>> {
-  const { page, limit, categorySlug, tagSlug } = options;
+  const { page, limit, tagSlug } = options;
   const offset = (page - 1) * limit;
-  const { where, params } = buildFilters({ categorySlug, tagSlug });
+  const { where, params } = buildFilters({ tagSlug });
 
   const countRows = await query<{ total: number }>(
     `
@@ -127,7 +103,7 @@ async function queryPosts(options: {
     SELECT ${postSelect}
     ${postFrom}
     WHERE ${where}
-    GROUP BY p.id, c.id
+    GROUP BY p.id
     ORDER BY p."publishedAt" DESC
     LIMIT $${params.length + 1} OFFSET $${params.length + 2}
     `,
@@ -150,13 +126,11 @@ async function queryPosts(options: {
 export async function listPosts(options: {
   page: number;
   limit: number;
-  category?: string;
   tag?: string;
 }) {
   return queryPosts({
     page: options.page,
     limit: Math.min(options.limit, 50),
-    categorySlug: options.category,
     tagSlug: options.tag,
   });
 }
@@ -167,7 +141,7 @@ export async function getPostBySlug(slug: string): Promise<PostDetail> {
     SELECT ${postSelect}
     ${postFrom}
     WHERE ${publishedClause} AND p.slug = $1
-    GROUP BY p.id, c.id
+    GROUP BY p.id
     LIMIT 1
     `,
     [slug],
@@ -178,35 +152,6 @@ export async function getPostBySlug(slug: string): Promise<PostDetail> {
   }
 
   return mapPostDetail(rows[0]);
-}
-
-export async function listCategories(): Promise<Category[]> {
-  return query<Category>(`
-    SELECT id, name, slug
-    FROM "Category"
-    ORDER BY name ASC
-  `);
-}
-
-export async function listCategoryPosts(
-  slug: string,
-  page: number,
-  limit: number,
-) {
-  const categories = await query<{ id: string }>(
-    `SELECT id FROM "Category" WHERE slug = $1 LIMIT 1`,
-    [slug],
-  );
-
-  if (!categories[0]) {
-    throw new Error(`Category "${slug}" not found`);
-  }
-
-  return queryPosts({
-    page,
-    limit: Math.min(limit, 50),
-    categorySlug: slug,
-  });
 }
 
 export async function listTags(): Promise<Tag[]> {

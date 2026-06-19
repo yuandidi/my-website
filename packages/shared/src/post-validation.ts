@@ -1,9 +1,7 @@
 import type {
-  CreateCategoryInput,
   CreatePostInput,
   CreateTagInput,
   PostStatus,
-  UpdateCategoryInput,
   UpdatePostInput,
   UpdateTagInput,
 } from './index';
@@ -85,14 +83,6 @@ export function validateCreatePostInput(input: CreatePostInput) {
     errors.push('status must be DRAFT or PUBLISHED');
   }
 
-  if (
-    input.categoryId !== undefined &&
-    input.categoryId !== null &&
-    input.categoryId.trim().length < 1
-  ) {
-    errors.push('categoryId must be a non-empty string when provided');
-  }
-
   validateTagIds(errors, input.tagIds);
 
   if (errors.length > 0) {
@@ -137,47 +127,7 @@ export function validateUpdatePostInput(input: UpdatePostInput) {
     errors.push('status must be DRAFT or PUBLISHED');
   }
 
-  if (
-    input.categoryId !== undefined &&
-    input.categoryId !== null &&
-    input.categoryId.trim().length < 1
-  ) {
-    errors.push('categoryId must be a non-empty string when provided');
-  }
-
   validateTagIds(errors, input.tagIds);
-
-  if (errors.length > 0) {
-    throw new Error(errors.join('; '));
-  }
-}
-
-export function validateCreateCategoryInput(input: CreateCategoryInput) {
-  const errors: string[] = [];
-
-  const name = input.name?.trim() ?? '';
-  if (name.length < 1 || name.length > 50) {
-    errors.push('name must be 1-50 characters');
-  }
-
-  validateSlugField(errors, 'slug', input.slug);
-
-  if (errors.length > 0) {
-    throw new Error(errors.join('; '));
-  }
-}
-
-export function validateUpdateCategoryInput(input: UpdateCategoryInput) {
-  const errors: string[] = [];
-
-  if (input.name !== undefined) {
-    const name = input.name.trim();
-    if (name.length < 1 || name.length > 50) {
-      errors.push('name must be 1-50 characters');
-    }
-  }
-
-  validateSlugField(errors, 'slug', input.slug);
 
   if (errors.length > 0) {
     throw new Error(errors.join('; '));

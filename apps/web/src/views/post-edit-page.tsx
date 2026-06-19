@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { useAuth } from '@/hooks/useAuth'
 import { useAdminPost, usePostMutations } from '@/hooks/useAdminPosts'
-import { useCategories, useTags } from '@/hooks/usePosts'
+import { useTags } from '@/hooks/usePosts'
 
 interface PostEditFormProps {
   mode: 'create' | 'edit'
@@ -21,7 +21,6 @@ interface PostEditFormProps {
 
 function PostEditForm({ mode, initialPost }: PostEditFormProps) {
   const router = useRouter()
-  const { data: categories } = useCategories()
   const { data: tags } = useTags()
   const { createPost, updatePost } = usePostMutations()
 
@@ -31,7 +30,6 @@ function PostEditForm({ mode, initialPost }: PostEditFormProps) {
   const [content, setContent] = useState(initialPost?.content ?? '')
   const [coverImage, setCoverImage] = useState(initialPost?.coverImage ?? '')
   const [status, setStatus] = useState<PostStatus>(initialPost?.status ?? 'DRAFT')
-  const [categoryId, setCategoryId] = useState(initialPost?.categoryId ?? '')
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>(
     initialPost?.tagIds ?? [],
   )
@@ -57,7 +55,6 @@ function PostEditForm({ mode, initialPost }: PostEditFormProps) {
       content,
       coverImage: coverImage.trim() || null,
       status,
-      categoryId: categoryId || null,
       tagIds: selectedTagIds,
     }
 
@@ -128,35 +125,17 @@ function PostEditForm({ mode, initialPost }: PostEditFormProps) {
         />
       </label>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <label className="block space-y-2">
-          <span className="text-sm font-medium">状态</span>
-          <select
-            className="border-input bg-background ring-offset-background focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:outline-none"
-            value={status}
-            onChange={(event) => setStatus(event.target.value as PostStatus)}
-          >
-            <option value="DRAFT">草稿</option>
-            <option value="PUBLISHED">已发布</option>
-          </select>
-        </label>
-
-        <label className="block space-y-2">
-          <span className="text-sm font-medium">分类</span>
-          <select
-            className="border-input bg-background ring-offset-background focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:outline-none"
-            value={categoryId}
-            onChange={(event) => setCategoryId(event.target.value)}
-          >
-            <option value="">无分类</option>
-            {categories?.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.name}
-              </option>
-            ))}
-          </select>
-        </label>
-      </div>
+      <label className="block space-y-2">
+        <span className="text-sm font-medium">状态</span>
+        <select
+          className="border-input bg-background ring-offset-background focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:outline-none"
+          value={status}
+          onChange={(event) => setStatus(event.target.value as PostStatus)}
+        >
+          <option value="DRAFT">草稿</option>
+          <option value="PUBLISHED">已发布</option>
+        </select>
+      </label>
 
       <div className="space-y-3">
         <span className="text-sm font-medium">标签</span>

@@ -1,11 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type {
   AdminPostDetail,
-  CreateCategoryInput,
   CreatePostInput,
   CreateTagInput,
   PostsQueryParams,
-  UpdateCategoryInput,
   UpdatePostInput,
   UpdateTagInput,
 } from '@my-blog/shared'
@@ -36,7 +34,6 @@ export function usePostMutations() {
       queryClient.invalidateQueries({ queryKey: ['admin-posts'] }),
       queryClient.invalidateQueries({ queryKey: ['posts'] }),
       queryClient.invalidateQueries({ queryKey: ['site-meta'] }),
-      queryClient.invalidateQueries({ queryKey: ['categories'] }),
       queryClient.invalidateQueries({ queryKey: ['tags'] }),
     ])
   }
@@ -73,32 +70,10 @@ export function useTaxonomyMutations() {
 
   const invalidateTaxonomy = async () => {
     await Promise.all([
-      queryClient.invalidateQueries({ queryKey: ['categories'] }),
       queryClient.invalidateQueries({ queryKey: ['tags'] }),
       queryClient.invalidateQueries({ queryKey: ['site-meta'] }),
     ])
   }
-
-  const createCategory = useMutation({
-    mutationFn: (input: CreateCategoryInput) => api.createCategory(input),
-    onSuccess: invalidateTaxonomy,
-  })
-
-  const updateCategory = useMutation({
-    mutationFn: ({
-      slug,
-      input,
-    }: {
-      slug: string
-      input: UpdateCategoryInput
-    }) => api.updateCategory(slug, input),
-    onSuccess: invalidateTaxonomy,
-  })
-
-  const deleteCategory = useMutation({
-    mutationFn: (slug: string) => api.deleteCategory(slug),
-    onSuccess: invalidateTaxonomy,
-  })
 
   const createTag = useMutation({
     mutationFn: (input: CreateTagInput) => api.createTag(input),
@@ -117,9 +92,6 @@ export function useTaxonomyMutations() {
   })
 
   return {
-    createCategory,
-    updateCategory,
-    deleteCategory,
     createTag,
     updateTag,
     deleteTag,

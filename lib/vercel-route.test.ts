@@ -12,10 +12,10 @@ function mockReq(
 describe('getApiPath', () => {
   it('parses __path from vercel.json rewrite', () => {
     const req = mockReq('/api/index?page=1', {
-      [API_PATH_QUERY_KEY]: 'categories/tech/posts',
+      [API_PATH_QUERY_KEY]: 'tags/tech/posts',
       page: '1',
     });
-    expect(getApiPath(req)).toEqual(['categories', 'tech', 'posts']);
+    expect(getApiPath(req)).toEqual(['tags', 'tech', 'posts']);
   });
 
   it('parses __path array segments from rewrite', () => {
@@ -32,8 +32,8 @@ describe('getApiPath', () => {
 
   it('parses single segment routes', () => {
     const req = mockReq('/api/index', {
-      [API_PATH_QUERY_KEY]: 'categories',
+      [API_PATH_QUERY_KEY]: 'tags',
     });
-    expect(getApiPath(req)).toEqual(['categories']);
+    expect(getApiPath(req)).toEqual(['tags']);
   });
 });

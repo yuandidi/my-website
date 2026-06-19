@@ -2,8 +2,6 @@ import {
   API_ROUTES,
   type AdminPostDetail,
   type AdminPostSummary,
-  type Category,
-  type CreateCategoryInput,
   type CreatePostInput,
   type CreateTagInput,
   type MeResponse,
@@ -14,7 +12,6 @@ import {
   type SiteMetaResponse,
   type SiteProfile,
   type Tag,
-  type UpdateCategoryInput,
   type UpdatePostInput,
   type UpdateProfileInput,
   type UpdateTagInput,
@@ -70,7 +67,6 @@ function buildQuery(params?: PostsQueryParams) {
   const search = new URLSearchParams()
   if (params.page) search.set('page', String(params.page))
   if (params.limit) search.set('limit', String(params.limit))
-  if (params.category) search.set('category', params.category)
   if (params.tag) search.set('tag', params.tag)
 
   const query = search.toString()
@@ -112,23 +108,6 @@ export const api = {
       method: 'DELETE',
     })
   },
-  createCategory(input: CreateCategoryInput) {
-    return request<Category>(API_ROUTES.categories, {
-      method: 'POST',
-      body: JSON.stringify(input),
-    })
-  },
-  updateCategory(slug: string, input: UpdateCategoryInput) {
-    return request<Category>(API_ROUTES.categoryBySlug(slug), {
-      method: 'PATCH',
-      body: JSON.stringify(input),
-    })
-  },
-  deleteCategory(slug: string) {
-    return request<void>(API_ROUTES.categoryBySlug(slug), {
-      method: 'DELETE',
-    })
-  },
   createTag(input: CreateTagInput) {
     return request<Tag>(API_ROUTES.tags, {
       method: 'POST',
@@ -145,14 +124,6 @@ export const api = {
     return request<void>(API_ROUTES.tagBySlug(slug), {
       method: 'DELETE',
     })
-  },
-  getCategories() {
-    return request<Category[]>(API_ROUTES.categories)
-  },
-  getCategoryPosts(slug: string, params?: PostsQueryParams) {
-    return request<PaginatedResponse<PostSummary>>(
-      `${API_ROUTES.categoryPosts(slug)}${buildQuery(params)}`,
-    )
   },
   getTags() {
     return request<Tag[]>(API_ROUTES.tags)

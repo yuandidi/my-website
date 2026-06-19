@@ -19,7 +19,7 @@ export interface RegionHotspot extends HotspotBase {
 
 export type WorldHotspot = HutHotspot | RegionHotspot
 
-/** 地图热点；新增分类后在此补充 region 条目 */
+/** 地图热点；新增标签后在此补充 region 条目 */
 export const WORLD_HOTSPOTS: WorldHotspot[] = [
   {
     kind: 'hut',
@@ -31,7 +31,7 @@ export const WORLD_HOTSPOTS: WorldHotspot[] = [
 ]
 
 export function getHotspotHref(spot: WorldHotspot): string {
-  return spot.kind === 'hut' ? WEB_ROUTES.profile : WEB_ROUTES.category(spot.slug)
+  return spot.kind === 'hut' ? WEB_ROUTES.profile : WEB_ROUTES.tag(spot.slug)
 }
 
 export function getRegionHotspots(): RegionHotspot[] {
