@@ -5,6 +5,8 @@
     "dev": "pnpm dlx vercel@latest dev",
     "dev:web": "pnpm --filter web dev",
     "build": "pnpm --filter @my-blog/shared build && pnpm --filter web build",
+    "typecheck": "tsc --noEmit",
+    "check": "pnpm build && pnpm typecheck && pnpm --filter web lint",
     "deploy:vercel": "pnpm dlx vercel@latest --prod",
     "db:push": "dotenv -e .env -- tsx scripts/db-push.ts",
     "db:seed": "dotenv -e .env -- tsx scripts/seed.ts",
