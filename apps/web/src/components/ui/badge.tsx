@@ -3,14 +3,18 @@ import * as React from 'react'
 import { cn } from '@/lib/utils'
 
 const badgeVariants = cva(
-  'inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors',
+  'inline-flex items-center rounded-none border-2 px-2.5 py-0.5 font-pixel text-xs font-medium transition-colors fantasy-pixel-shadow-sm',
   {
     variants: {
       variant: {
         default: 'border-transparent bg-primary text-primary-foreground',
         secondary:
-          'border-transparent bg-muted text-muted-foreground hover:bg-muted/80',
+          'border border-gold/40 bg-gold/15 text-gold-foreground hover:bg-gold/25',
         outline: 'text-foreground',
+        guild:
+          'border border-gold/50 bg-gold/20 text-gold-foreground hover:bg-gold/30',
+        spell:
+          'border border-primary/50 bg-primary/10 text-primary hover:bg-primary/20',
       },
     },
     defaultVariants: {

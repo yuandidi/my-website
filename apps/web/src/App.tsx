@@ -5,6 +5,7 @@ import { CategoryPage } from '@/pages/category-page'
 import { HomePage } from '@/pages/home-page'
 import { NotFoundPage } from '@/pages/not-found-page'
 import { PostDetailPage } from '@/pages/post-detail-page'
+import { ProfilePage } from '@/pages/profile-page'
 import { TagPage } from '@/pages/tag-page'
 
 const queryClient = new QueryClient({
@@ -20,11 +21,12 @@ export function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <div className="min-h-screen">
+        <div className="fantasy-bg min-h-screen">
           <SiteHeader />
           <main>
             <Routes>
               <Route path="/" element={<HomePage />} />
+              <Route path="/profile" element={<ProfilePage />} />
               <Route path="/posts/:slug" element={<PostDetailPage />} />
               <Route path="/categories/:slug" element={<CategoryPage />} />
               <Route path="/tags/:slug" element={<TagPage />} />

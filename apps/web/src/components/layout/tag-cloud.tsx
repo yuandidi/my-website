@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom'
 import type { Tag } from '@my-blog/shared'
+import { WEB_ROUTES } from '@my-blog/shared'
 import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { FantasyScroll } from '@/components/layout/fantasy-scroll'
 import { cn } from '@/lib/utils'
 
 interface TagCloudProps {
@@ -11,19 +12,19 @@ interface TagCloudProps {
 
 export function TagCloud({ tags, className }: TagCloudProps) {
   return (
-    <Card className={cn(className)}>
-      <CardHeader>
-        <CardTitle className="text-base">标签</CardTitle>
-      </CardHeader>
-      <CardContent className="flex flex-wrap gap-2">
+    <FantasyScroll className={cn(className)}>
+      <h2 className="fantasy-section-divider font-display text-lg text-gold">
+        咒文印记
+      </h2>
+      <div className="mt-4 flex flex-wrap gap-2">
         {tags.map((tag) => (
-          <Link key={tag.id} to={`/tags/${tag.slug}`}>
-            <Badge variant="outline" className="cursor-pointer hover:bg-accent">
+          <Link key={tag.id} to={WEB_ROUTES.tag(tag.slug)}>
+            <Badge variant="spell" className="cursor-pointer">
               {tag.name}
             </Badge>
           </Link>
         ))}
-      </CardContent>
-    </Card>
+      </div>
+    </FantasyScroll>
   )
 }

@@ -22,8 +22,10 @@ export function TagPage() {
   return (
     <div className="mx-auto max-w-3xl space-y-6 px-4 py-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">标签：{tagName}</h1>
-        <p className="mt-2 text-muted-foreground">该标签下的全部文章</p>
+        <h1 className="fantasy-section-divider text-3xl font-bold text-gold">
+          咒文：{tagName}
+        </h1>
+        <p className="mt-3 text-muted-foreground">铭刻此咒文的所有卷轴</p>
       </div>
 
       {isLoading && <PostListSkeleton />}
@@ -37,7 +39,7 @@ export function TagPage() {
         <>
           <div className="space-y-4">
             {data.data.length === 0 ? (
-              <p className="text-muted-foreground">暂无文章</p>
+              <p className="text-muted-foreground">这道咒文尚未唤醒任何卷轴…</p>
             ) : (
               data.data.map((post) => <PostCard key={post.id} post={post} />)
             )}
