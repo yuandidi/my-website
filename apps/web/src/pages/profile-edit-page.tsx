@@ -41,7 +41,6 @@ function ProfileEditForm({ profile }: ProfileEditFormProps) {
   const [skillsText, setSkillsText] = useState(profile.skills.join(', '))
   const [links, setLinks] = useState<ProfileLink[]>(profile.links)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const [successMessage, setSuccessMessage] = useState<string | null>(null)
 
   const mutation = useMutation({
     mutationFn: () =>
@@ -53,14 +52,11 @@ function ProfileEditForm({ profile }: ProfileEditFormProps) {
         skills: parseSkills(skillsText),
         links: sanitizeLinks(links),
       }),
-    onSuccess: async (updated) => {
+    onSuccess: (updated) => {
       queryClient.setQueryData(['profile'], updated)
-      setErrorMessage(null)
-      setSuccessMessage('资料已保存')
-      navigate(`${WEB_ROUTES.profile}?saved=1`)
+      navigate(`${WEB_ROUTES.profile}?saved=1`, { replace: true })
     },
     onError: (error) => {
-      setSuccessMessage(null)
       setErrorMessage(error instanceof Error ? error.message : '保存失败')
     },
   })
@@ -147,9 +143,6 @@ function ProfileEditForm({ profile }: ProfileEditFormProps) {
 
       {errorMessage && (
         <p className="text-sm text-destructive">{errorMessage}</p>
-      )}
-      {successMessage && (
-        <p className="text-sm text-primary">{successMessage}</p>
       )}
 
       <div className="flex flex-wrap gap-3">
