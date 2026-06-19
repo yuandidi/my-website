@@ -1,4 +1,11 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import type { AuthUser } from '@my-blog/shared';
+import {
+  buildClearSessionCookie,
+  buildSessionCookie,
+  getUserBySessionToken,
+  parseSessionCookie,
+} from './auth';
 
 export function sendJson(res: VercelResponse, status: number, data: unknown) {
   res.status(status).setHeader('Content-Type', 'application/json');
@@ -11,6 +18,18 @@ export function methodNotAllowed(res: VercelResponse) {
 
 export function notFound(res: VercelResponse, message: string) {
   sendJson(res, 404, { message });
+}
+
+export function badRequest(res: VercelResponse, message: string) {
+  sendJson(res, 400, { message });
+}
+
+export function unauthorized(res: VercelResponse, message = 'Unauthorized') {
+  sendJson(res, 401, { message });
+}
+
+export function forbidden(res: VercelResponse, message = 'Forbidden') {
+  sendJson(res, 403, { message });
 }
 
 export function serverError(res: VercelResponse, error: unknown) {
@@ -30,6 +49,28 @@ export function getQueryNumber(
 export function getQueryString(value: string | string[] | undefined) {
   const raw = Array.isArray(value) ? value[0] : value;
   return raw?.trim() || undefined;
+}
+
+export async function parseJsonBody<T>(req: VercelRequest): Promise<T> {
+  if (typeof req.body === 'string') {
+    return JSON.parse(req.body) as T;
+  }
+
+  if (req.body && typeof req.body === 'object') {
+    return req.body as T;
+  }
+
+  const chunks: Buffer[] = [];
+  for await (const chunk of req) {
+    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+  }
+
+  const raw = Buffer.concat(chunks).toString('utf8');
+  if (!raw.trim()) {
+    return {} as T;
+  }
+
+  return JSON.parse(raw) as T;
 }
 
 export async function withGet(
@@ -52,4 +93,82 @@ export async function withGet(
     }
     serverError(res, error);
   }
+}
+
+type MethodHandler = () => Promise<unknown>;
+
+export async function withMethods(
+  req: VercelRequest,
+  res: VercelResponse,
+  handlers: Partial<Record<string, MethodHandler>>,
+) {
+  const method = req.method ?? 'GET';
+  const handler = handlers[method];
+
+  if (!handler) {
+    methodNotAllowed(res);
+    return;
+  }
+
+  try {
+    const data = await handler();
+    if (data !== undefined) {
+      sendJson(res, 200, data);
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      if (error.message.endsWith('not found')) {
+        notFound(res, error.message);
+        return;
+      }
+      if (error.message === 'Unauthorized') {
+        unauthorized(res);
+        return;
+      }
+      if (error.message === 'Forbidden') {
+        forbidden(res);
+        return;
+      }
+      if (
+        error.message.includes('must be') ||
+        error.message.includes('Invalid OAuth') ||
+        error.message.includes('not allowed')
+      ) {
+        badRequest(res, error.message);
+        return;
+      }
+    }
+    serverError(res, error);
+  }
+}
+
+export async function getAuthUser(req: VercelRequest): Promise<AuthUser | null> {
+  const cookieHeader = req.headers.cookie;
+  const token = parseSessionCookie(cookieHeader);
+  return getUserBySessionToken(token);
+}
+
+export async function requireDeveloper(req: VercelRequest): Promise<AuthUser> {
+  const user = await getAuthUser(req);
+  if (!user) {
+    throw new Error('Unauthorized');
+  }
+
+  if (user.role !== 'DEVELOPER' && user.role !== 'ADMIN') {
+    throw new Error('Forbidden');
+  }
+
+  return user;
+}
+
+export function setSessionCookieHeader(
+  res: VercelResponse,
+  token: string,
+  maxAge: number,
+) {
+  res.setHeader('Set-Cookie', buildSessionCookie(token, maxAge));
+}
+
+export function clearSessionCookieHeader(res: VercelResponse) {
+  res.setHeader('Set-Cookie', buildClearSessionCookie());
 }

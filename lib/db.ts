@@ -1,7 +1,11 @@
 import { Pool, neonConfig } from '@neondatabase/serverless';
+import ws from 'ws';
 
 neonConfig.fetchConnectionCache = true;
 
+if (typeof WebSocket === 'undefined') {
+  neonConfig.webSocketConstructor = ws;
+}
 let pool: Pool | undefined;
 
 export function getPool() {
