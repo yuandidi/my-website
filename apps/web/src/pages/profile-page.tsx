@@ -1,6 +1,5 @@
 import { Link, useSearchParams } from 'react-router-dom'
-import ReactMarkdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
+import { MarkdownContent } from '@/components/blog/markdown-content'
 import { WEB_ROUTES } from '@my-blog/shared'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -89,7 +88,7 @@ export function ProfilePage() {
         </div>
 
         <div className="prose-fantasy">
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>{profile.bio}</ReactMarkdown>
+          <MarkdownContent content={profile.bio} />
         </div>
 
         <div>

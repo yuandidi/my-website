@@ -2,14 +2,15 @@ import { Link, useLocation } from 'react-router-dom'
 import { WEB_ROUTES } from '@my-blog/shared'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/hooks/useAuth'
-import { useCategories } from '@/hooks/usePosts'
+import { useSiteMeta } from '@/hooks/useSiteMeta'
 import { cn } from '@/lib/utils'
 interface SiteHeaderProps {
   className?: string
 }
 
 export function SiteHeader({ className }: SiteHeaderProps) {
-  const { data: categories } = useCategories()
+  const { data: siteMeta } = useSiteMeta()
+  const categories = siteMeta?.categories
   const { pathname } = useLocation()
   const { user, isLoggedIn, login, logout, isLoading } = useAuth()
   const isProfileRoute =

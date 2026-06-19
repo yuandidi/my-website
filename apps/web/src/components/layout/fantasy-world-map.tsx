@@ -57,6 +57,7 @@ export function FantasyWorldMap({ className }: FantasyWorldMapProps) {
             src="/world-map.png"
             alt=""
             className="size-full object-cover object-center opacity-95 image-pixelated dark:opacity-50 dark:brightness-75"
+            loading="lazy"
             decoding="async"
           />
           <div

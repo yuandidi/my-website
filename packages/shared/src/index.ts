@@ -71,6 +71,11 @@ export interface MeResponse {
   user: AuthUser;
 }
 
+export interface SiteMetaResponse {
+  user: AuthUser | null;
+  categories: Category[];
+}
+
 export interface UpdateProfileInput {
   name?: string;
   title?: string;
@@ -88,6 +93,7 @@ export const API_ROUTES = {
   tags: '/tags',
   tagPosts: (slug: string) => `/tags/${slug}/posts`,
   health: '/health',
+  siteMeta: '/site-meta',
   profile: '/profile',
   auth: {
     github: '/auth/github',

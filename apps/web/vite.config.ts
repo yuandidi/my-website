@@ -11,6 +11,41 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes('node_modules')) {
+            return undefined
+          }
+
+          if (
+            id.includes('node_modules/react/') ||
+            id.includes('node_modules/react-dom/') ||
+            id.includes('react-router')
+          ) {
+            return 'vendor-react'
+          }
+
+          if (id.includes('@tanstack/react-query')) {
+            return 'vendor-query'
+          }
+
+          if (
+            id.includes('react-markdown') ||
+            id.includes('remark-gfm') ||
+            id.includes('remark-') ||
+            id.includes('micromark') ||
+            id.includes('mdast')
+          ) {
+            return 'vendor-markdown'
+          }
+
+          return 'vendor-misc'
+        },
+      },
+    },
+  },
   server: {
     proxy: {
       '/api': {

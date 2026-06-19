@@ -4,7 +4,7 @@
 @theme {
   --font-display: "ZCOOL KuaiLe", "Noto Sans SC", sans-serif;
   --font-body: "Noto Sans SC", system-ui, sans-serif;
-  --font-pixel: "Pixelify Sans", "ZCOOL KuaiLe", "Noto Sans SC", sans-serif;
+  --font-pixel: "ZCOOL KuaiLe", "Noto Sans SC", sans-serif;
 
   /* 羊皮卷 · light */
   --color-background: oklch(94% 0.04 85);

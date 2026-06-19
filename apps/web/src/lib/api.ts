@@ -6,6 +6,7 @@ import {
   type PostDetail,
   type PostSummary,
   type PostsQueryParams,
+  type SiteMetaResponse,
   type SiteProfile,
   type Tag,
   type UpdateProfileInput,
@@ -96,6 +97,9 @@ export const api = {
     return request<PaginatedResponse<PostSummary>>(
       `${API_ROUTES.tagPosts(slug)}${buildQuery(params)}`,
     )
+  },
+  getSiteMeta() {
+    return request<SiteMetaResponse>(API_ROUTES.siteMeta)
   },
   getProfile() {
     return request<SiteProfile>(API_ROUTES.profile)

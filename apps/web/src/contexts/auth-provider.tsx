@@ -3,28 +3,19 @@ import {
   useMemo,
   type ReactNode,
 } from 'react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { AuthContext, type AuthContextValue } from '@/contexts/auth-context'
+import { useSiteMeta } from '@/hooks/useSiteMeta'
 import { api, getGithubLoginUrl } from '@/lib/api'
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient()
-  const { data, isLoading } = useQuery({
-    queryKey: ['auth', 'me'],
-    queryFn: async () => {
-      try {
-        return await api.getMe()
-      } catch {
-        return null
-      }
-    },
-    retry: false,
-  })
+  const { data, isLoading } = useSiteMeta()
 
   const logoutMutation = useMutation({
     mutationFn: () => api.logout(),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['auth', 'me'] })
+      await queryClient.invalidateQueries({ queryKey: ['site-meta'] })
     },
   })
 

@@ -1,7 +1,6 @@
 import { Link, useParams } from 'react-router-dom'
-import ReactMarkdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
 import { WEB_ROUTES } from '@my-blog/shared'
+import { MarkdownContent } from '@/components/blog/markdown-content'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -80,7 +79,7 @@ export function PostDetailPage() {
         </div>
 
         <div className="prose-fantasy">
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.content}</ReactMarkdown>
+          <MarkdownContent content={post.content} />
         </div>
       </FantasyScroll>
 
