@@ -5,7 +5,6 @@ import { usePathname } from 'next/navigation'
 import { WEB_ROUTES } from '@my-blog/shared'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/hooks/useAuth'
-import { useSiteMeta } from '@/hooks/useSiteMeta'
 import { cn } from '@/lib/utils'
 
 interface SiteHeaderProps {
@@ -13,8 +12,6 @@ interface SiteHeaderProps {
 }
 
 export function SiteHeader({ className }: SiteHeaderProps) {
-  const { data: siteMeta } = useSiteMeta()
-  const tags = siteMeta?.tags
   const pathname = usePathname()
   const { user, isLoggedIn, login, logout, isLoading, isDeveloper } = useAuth()
   const isProfileRoute =
@@ -81,23 +78,6 @@ export function SiteHeader({ className }: SiteHeaderProps) {
           >
             Blog
           </Link>
-          {tags
-            ?.filter((tag) => tag.slug !== 'blog')
-            .map((tag) => {
-            const href = WEB_ROUTES.tag(tag.slug)
-            return (
-              <Link
-                key={tag.id}
-                href={href}
-                className={cn(
-                  'fantasy-nav-link',
-                  pathname === href && 'fantasy-nav-link-active',
-                )}
-              >
-                {tag.name}
-              </Link>
-            )
-          })}
           {!isLoading &&
             (isLoggedIn ? (
               <Button
