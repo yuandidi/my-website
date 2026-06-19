@@ -1,99 +1,105 @@
 # My Blog
 
-全栈博客 Monorepo：React + Vite + TypeScript 前台，NestJS + Prisma + Redis + PostgreSQL 后端。
+Vercel 友好全栈博客：React + Vite 前台，Vercel Serverless Functions + Postgres 后端。
 
 ## 技术栈
 
 | 层 | 技术 |
 |----|------|
 | 前端 | React 19、Vite、TypeScript、React Router、TanStack Query、shadcn/ui、Tailwind CSS |
-| 后端 | NestJS、Prisma、Redis、PostgreSQL |
-| 架构 | pnpm Monorepo（`apps/web`、`apps/api`、`packages/shared`） |
+| 后端 | Vercel Serverless Functions（`/api`） |
+| 数据库 | Vercel Postgres（Neon） |
+| 架构 | pnpm Monorepo，**一条命令部署前后端** |
 
-## 环境要求
+> `apps/api`（NestJS + Redis）保留作本地参考，生产部署不再依赖它。
 
-- Node.js 20+
-- pnpm 9+
-- Docker Desktop（用于 PostgreSQL 与 Redis）
+## 一键部署（推荐）
 
-## 快速开始
+### 1. 创建 Vercel Postgres
 
-### 1. 安装依赖
+在 [Vercel Dashboard](https://vercel.com) → 项目 → **Storage** → 创建 **Postgres**。
+
+Vercel 会自动注入 `POSTGRES_URL` 环境变量。
+
+### 2. 初始化数据库（本地执行一次）
 
 ```bash
 pnpm install
-```
-
-### 2. 配置环境变量
-
-```bash
 cp .env.example .env
-```
+# 把 .env 里的 POSTGRES_URL 改成 Vercel Postgres 连接串
 
-### 3. 启动数据库与缓存
-
-```bash
-pnpm docker:up
-```
-
-等待 PostgreSQL 与 Redis 健康检查通过。
-
-### 4. 数据库迁移与种子数据
-
-```bash
 pnpm db:setup
 ```
 
-### 5. 启动开发服务
+### 3. 部署
 
 ```bash
-pnpm dev
+pnpm deploy:vercel
 ```
 
-- 前台：http://localhost:5173
-- API：http://localhost:3000/api
-- 健康检查：http://localhost:3000/api/health
+访问 Vercel 分配的域名即可，**前后端同域**，前端默认请求 `/api`，无需配 CORS。
+
+## 本地开发
+
+```bash
+pnpm install
+cp .env.example .env
+pnpm docker:up          # 可选：本地 Postgres
+pnpm db:setup
+pnpm dev                # vercel dev，同时跑前端 + /api
+```
+
+仅跑前端：
+
+```bash
+pnpm dev:web
+```
 
 ## 项目结构
 
 ```text
 my-blog/
-├── apps/
-│   ├── web/          # React 前台
-│   └── api/          # NestJS 后端
-├── packages/
-│   └── shared/       # 共享类型与 API 路由常量
-├── docker-compose.yml
-└── pnpm-workspace.yaml
+├── api/                # Vercel Serverless API
+├── lib/                # 数据库与业务逻辑
+├── apps/web/           # React 前台
+├── packages/shared/    # 共享类型
+└── scripts/            # schema / seed
 ```
-
-## 可用脚本
-
-| 命令 | 说明 |
-|------|------|
-| `pnpm dev` | 并行启动 web + api |
-| `pnpm build` | 构建全部包 |
-| `pnpm docker:up` | 启动 PostgreSQL + Redis |
-| `pnpm docker:down` | 停止容器 |
-| `pnpm db:migrate` | 执行 Prisma 迁移 |
-| `pnpm db:seed` | 写入示例数据 |
-| `pnpm db:setup` | 迁移 + 种子 |
 
 ## API 端点
 
 | 方法 | 路径 | 说明 |
 |------|------|------|
-| GET | `/api/posts` | 文章列表（`?page&limit&category&tag`） |
+| GET | `/api/posts` | 文章列表 |
 | GET | `/api/posts/:slug` | 文章详情 |
 | GET | `/api/categories` | 全部分类 |
-| GET | `/api/categories/:slug/posts` | 分类下文章 |
+| GET | `/api/categories/:slug/posts` | 分类文章 |
 | GET | `/api/tags` | 全部标签 |
-| GET | `/api/tags/:slug/posts` | 标签下文章 |
-| GET | `/api/health` | 服务健康检查 |
+| GET | `/api/tags/:slug/posts` | 标签文章 |
+| GET | `/api/health` | 健康检查 |
+
+## 常用脚本
+
+| 命令 | 说明 |
+|------|------|
+| `pnpm dev` | 本地全栈（vercel dev） |
+| `pnpm deploy:vercel` | 生产部署 |
+| `pnpm db:setup` | 建表 + 种子数据 |
+| `pnpm build` | 仅构建前端 |
+
+## 开发 SOP
+
+任务完成后默认流程：
+
+1. `pnpm build` 验证通过
+2. 按模块拆分 git commit（`feat` / `fix` / `docs` / `chore`）
+3. `git push` 到 `origin`（`main` 与 `master` 保持同步）
+
+详见仓库内 `.cursor/rules/git-pr.mdc`。
 
 ## 二期规划
 
-- JWT 认证与后台管理
+- 用户认证与后台管理
 - 评论系统
 - 全文搜索
 - Markdown 编辑器
