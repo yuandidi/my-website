@@ -44,6 +44,42 @@ export interface PostsQueryParams {
   tag?: string;
 }
 
+export type UserRole = 'DEVELOPER' | 'ADMIN';
+
+export interface ProfileLink {
+  label: string;
+  href: string;
+}
+
+export interface SiteProfile {
+  name: string;
+  title: string;
+  avatarUrl: string;
+  bio: string;
+  skills: string[];
+  links: ProfileLink[];
+  updatedAt: string;
+}
+
+export interface AuthUser {
+  id: string;
+  githubLogin: string;
+  role: UserRole;
+}
+
+export interface MeResponse {
+  user: AuthUser;
+}
+
+export interface UpdateProfileInput {
+  name?: string;
+  title?: string;
+  avatarUrl?: string;
+  bio?: string;
+  skills?: string[];
+  links?: ProfileLink[];
+}
+
 export const API_ROUTES = {
   posts: '/posts',
   postBySlug: (slug: string) => `/posts/${slug}`,
@@ -52,13 +88,23 @@ export const API_ROUTES = {
   tags: '/tags',
   tagPosts: (slug: string) => `/tags/${slug}/posts`,
   health: '/health',
+  profile: '/profile',
+  auth: {
+    github: '/auth/github',
+    githubCallback: '/auth/github/callback',
+    logout: '/auth/logout',
+    me: '/auth/me',
+  },
 } as const;
 
 /** 前端页面路由（React Router），与 API 路径分离 */
 export const WEB_ROUTES = {
   home: '/',
   profile: '/profile',
+  profileEdit: '/profile/edit',
   post: (slug: string) => `/posts/${slug}`,
   category: (slug: string) => `/categories/${slug}`,
   tag: (slug: string) => `/tags/${slug}`,
 } as const;
+
+export { validateUpdateProfileInput } from './profile-validation';
