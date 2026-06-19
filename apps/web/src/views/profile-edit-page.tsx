@@ -1,5 +1,8 @@
-import { useState } from 'react'
-import { Link, Navigate, useNavigate } from 'react-router-dom'
+'use client'
+
+import { useEffect, useState } from 'react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import type { ProfileLink, SiteProfile } from '@my-blog/shared'
 import { WEB_ROUTES } from '@my-blog/shared'
@@ -32,7 +35,7 @@ interface ProfileEditFormProps {
 }
 
 function ProfileEditForm({ profile }: ProfileEditFormProps) {
-  const navigate = useNavigate()
+  const router = useRouter()
   const queryClient = useQueryClient()
   const [name, setName] = useState(profile.name)
   const [title, setTitle] = useState(profile.title)
@@ -54,7 +57,7 @@ function ProfileEditForm({ profile }: ProfileEditFormProps) {
       }),
     onSuccess: (updated) => {
       queryClient.setQueryData(['profile'], updated)
-      navigate(`${WEB_ROUTES.profile}?saved=1`, { replace: true })
+      router.replace(`${WEB_ROUTES.profile}?saved=1`)
     },
     onError: (error) => {
       setErrorMessage(error instanceof Error ? error.message : '保存失败')
@@ -154,7 +157,7 @@ function ProfileEditForm({ profile }: ProfileEditFormProps) {
           {mutation.isPending ? '保存中…' : '保存'}
         </Button>
         <Button asChild variant="outline">
-          <Link to={WEB_ROUTES.profile}>取消</Link>
+          <Link href={WEB_ROUTES.profile}>取消</Link>
         </Button>
       </div>
     </FantasyScroll>
@@ -164,6 +167,13 @@ function ProfileEditForm({ profile }: ProfileEditFormProps) {
 export function ProfileEditPage() {
   const { isDeveloper, isLoading: authLoading, login } = useAuth()
   const { data: profile, isLoading: profileLoading } = useSiteProfile()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!profileLoading && !profile) {
+      router.replace(WEB_ROUTES.profile)
+    }
+  }, [profile, profileLoading, router])
 
   if (authLoading || profileLoading) {
     return null
@@ -176,7 +186,7 @@ export function ProfileEditPage() {
         <Button onClick={login}>GitHub 登录</Button>
         <div>
           <Button asChild variant="outline">
-            <Link to={WEB_ROUTES.profile}>返回关于页</Link>
+            <Link href={WEB_ROUTES.profile}>返回关于页</Link>
           </Button>
         </div>
       </div>
@@ -184,7 +194,7 @@ export function ProfileEditPage() {
   }
 
   if (!profile) {
-    return <Navigate to={WEB_ROUTES.profile} replace />
+    return null
   }
 
   return (

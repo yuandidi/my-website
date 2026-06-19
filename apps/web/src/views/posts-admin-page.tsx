@@ -1,5 +1,7 @@
+'use client'
+
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import Link from 'next/link'
 import { WEB_ROUTES } from '@my-blog/shared'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -41,7 +43,7 @@ export function PostsAdminPage() {
         <Button onClick={login}>GitHub 登录</Button>
         <div>
           <Button asChild variant="outline">
-            <Link to={WEB_ROUTES.home}>返回首页</Link>
+            <Link href={WEB_ROUTES.home}>返回首页</Link>
           </Button>
         </div>
       </div>
@@ -90,7 +92,7 @@ export function PostsAdminPage() {
           </p>
         </div>
         <Button asChild>
-          <Link to={WEB_ROUTES.postNew}>新建文章</Link>
+          <Link href={WEB_ROUTES.postNew}>新建文章</Link>
         </Button>
       </div>
 
@@ -115,11 +117,11 @@ export function PostsAdminPage() {
               <div className="flex flex-wrap gap-2">
                 {post.status === 'PUBLISHED' && (
                   <Button asChild variant="outline" size="sm">
-                    <Link to={WEB_ROUTES.post(post.slug)}>查看</Link>
+                    <Link href={WEB_ROUTES.post(post.slug)}>查看</Link>
                   </Button>
                 )}
                 <Button asChild variant="outline" size="sm">
-                  <Link to={WEB_ROUTES.postEdit(post.slug)}>编辑</Link>
+                  <Link href={WEB_ROUTES.postEdit(post.slug)}>编辑</Link>
                 </Button>
                 <Button
                   variant="outline"

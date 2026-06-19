@@ -2,7 +2,7 @@
   "name": "my-blog",
   "private": true,
   "scripts": {
-    "dev": "pnpm dlx vercel@latest dev",
+    "dev": "pnpm --filter web dev",
     "dev:web": "pnpm --filter web dev",
     "build": "pnpm --filter @my-blog/shared build && pnpm --filter web build",
     "typecheck": "tsc --noEmit",

@@ -1,5 +1,7 @@
+'use client'
+
 import { Home } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import Link from 'next/link'
 import { FantasyScroll } from '@/components/layout/fantasy-scroll'
 import {
   getHotspotHref,
@@ -17,7 +19,7 @@ function WorldMapHotspot({ spot }: WorldMapHotspotProps) {
 
   return (
     <Link
-      to={href}
+      href={href}
       className="absolute z-10 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-primary"
       style={{ left: `${spot.x}%`, top: `${spot.y}%` }}
       aria-label={`${spot.label}，进入关于页`}
@@ -75,7 +77,7 @@ export function FantasyWorldMap({ className }: FantasyWorldMapProps) {
         {WORLD_HOTSPOTS.map((spot) => (
           <Link
             key={spot.id}
-            to={getHotspotHref(spot)}
+            href={getHotspotHref(spot)}
             className="rounded-none border-2 border-gold/40 bg-card px-3 py-1 font-pixel text-muted-foreground transition-colors hover:border-gold hover:text-gold fantasy-pixel-shadow-sm"
           >
             {spot.label}

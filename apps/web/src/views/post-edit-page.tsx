@@ -1,5 +1,8 @@
-import { useState } from 'react'
-import { Link, Navigate, useNavigate } from 'react-router-dom'
+'use client'
+
+import { useEffect, useState } from 'react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import type { AdminPostDetail, PostStatus } from '@my-blog/shared'
 import { WEB_ROUTES } from '@my-blog/shared'
 import { Badge } from '@/components/ui/badge'
@@ -17,7 +20,7 @@ interface PostEditFormProps {
 }
 
 function PostEditForm({ mode, initialPost }: PostEditFormProps) {
-  const navigate = useNavigate()
+  const router = useRouter()
   const { data: categories } = useCategories()
   const { data: tags } = useTags()
   const { createPost, updatePost } = usePostMutations()
@@ -61,7 +64,7 @@ function PostEditForm({ mode, initialPost }: PostEditFormProps) {
     if (mode === 'create') {
       createPost.mutate(payload, {
         onSuccess: () => {
-          navigate(WEB_ROUTES.postsAdmin, { replace: true })
+          router.replace(WEB_ROUTES.postsAdmin)
         },
         onError: (error) => {
           setErrorMessage(error instanceof Error ? error.message : '创建失败')
@@ -78,7 +81,7 @@ function PostEditForm({ mode, initialPost }: PostEditFormProps) {
       { slug: initialPost.slug, input: payload },
       {
         onSuccess: () => {
-          navigate(WEB_ROUTES.postsAdmin, { replace: true })
+          router.replace(WEB_ROUTES.postsAdmin)
         },
         onError: (error) => {
           setErrorMessage(error instanceof Error ? error.message : '保存失败')
@@ -187,7 +190,7 @@ function PostEditForm({ mode, initialPost }: PostEditFormProps) {
           {isPending ? '保存中…' : mode === 'create' ? '创建' : '保存'}
         </Button>
         <Button asChild variant="outline">
-          <Link to={WEB_ROUTES.postsAdmin}>取消</Link>
+          <Link href={WEB_ROUTES.postsAdmin}>取消</Link>
         </Button>
       </div>
     </FantasyScroll>
@@ -202,6 +205,13 @@ interface PostEditPageProps {
 export function PostEditPage({ mode, slug }: PostEditPageProps) {
   const { isDeveloper, isLoading: authLoading, login } = useAuth()
   const { data: post, isLoading: postLoading } = useAdminPost(slug ?? '')
+  const router = useRouter()
+
+  useEffect(() => {
+    if (mode === 'edit' && !postLoading && !post) {
+      router.replace(WEB_ROUTES.postsAdmin)
+    }
+  }, [mode, post, postLoading, router])
 
   if (authLoading || (mode === 'edit' && postLoading)) {
     return null
@@ -214,7 +224,7 @@ export function PostEditPage({ mode, slug }: PostEditPageProps) {
         <Button onClick={login}>GitHub 登录</Button>
         <div>
           <Button asChild variant="outline">
-            <Link to={WEB_ROUTES.home}>返回首页</Link>
+            <Link href={WEB_ROUTES.home}>返回首页</Link>
           </Button>
         </div>
       </div>
@@ -222,7 +232,7 @@ export function PostEditPage({ mode, slug }: PostEditPageProps) {
   }
 
   if (mode === 'edit' && !post) {
-    return <Navigate to={WEB_ROUTES.postsAdmin} replace />
+    return null
   }
 
   return (

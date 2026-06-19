@@ -1,4 +1,7 @@
-import { Link, useSearchParams } from 'react-router-dom'
+'use client'
+
+import Link from 'next/link'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { MarkdownContent } from '@/components/blog/markdown-content'
 import { WEB_ROUTES } from '@my-blog/shared'
 import { Badge } from '@/components/ui/badge'
@@ -12,7 +15,8 @@ import { QueryError } from '@/components/blog/post-list-states'
 export function ProfilePage() {
   const { user, isLoggedIn, isDeveloper, login } = useAuth()
   const { data: profile, isLoading, isError, error, refetch } = useSiteProfile()
-  const [searchParams, setSearchParams] = useSearchParams()
+  const searchParams = useSearchParams()
+  const router = useRouter()
   const saved = searchParams.get('saved') === '1'
 
   if (isLoading) {
@@ -47,10 +51,10 @@ export function ProfilePage() {
         {isDeveloper ? (
           <div className="flex flex-wrap gap-2">
             <Button asChild variant="outline" size="sm">
-              <Link to={WEB_ROUTES.postsAdmin}>管理文章</Link>
+              <Link href={WEB_ROUTES.postsAdmin}>管理文章</Link>
             </Button>
             <Button asChild variant="outline" size="sm">
-              <Link to={WEB_ROUTES.profileEdit}>编辑资料</Link>
+              <Link href={WEB_ROUTES.profileEdit}>编辑资料</Link>
             </Button>
           </div>
         ) : !isLoggedIn ? (
@@ -66,7 +70,7 @@ export function ProfilePage() {
           <button
             type="button"
             className="ml-2 underline"
-            onClick={() => setSearchParams({})}
+            onClick={() => router.replace(WEB_ROUTES.profile)}
           >
             知道了
           </button>
@@ -122,7 +126,7 @@ export function ProfilePage() {
 
       <div className="flex flex-wrap justify-center gap-3">
         <Button asChild variant="outline">
-          <Link to={WEB_ROUTES.home}>返回首页</Link>
+          <Link href={WEB_ROUTES.home}>返回首页</Link>
         </Button>
       </div>
     </div>

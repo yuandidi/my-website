@@ -1,5 +1,6 @@
+'use client'
+
 import { useState } from 'react'
-import { useParams } from 'react-router-dom'
 import { PostCard } from '@/components/blog/post-card'
 import {
   PostListSkeleton,
@@ -8,8 +9,11 @@ import {
 import { Pagination } from '@/components/blog/pagination'
 import { useCategories, useCategoryPosts } from '@/hooks/usePosts'
 
-export function CategoryPage() {
-  const { slug = '' } = useParams()
+interface CategoryPageProps {
+  slug: string
+}
+
+export function CategoryPage({ slug }: CategoryPageProps) {
   const [page, setPage] = useState(1)
   const { data: categories } = useCategories()
   const { data, isLoading, isError, error, refetch } = useCategoryPosts(slug, {

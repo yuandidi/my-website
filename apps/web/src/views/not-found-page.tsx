@@ -1,4 +1,6 @@
-import { Link } from 'react-router-dom'
+'use client'
+
+import Link from 'next/link'
 import { WEB_ROUTES } from '@my-blog/shared'
 import { Button } from '@/components/ui/button'
 import { FantasyScroll } from '@/components/layout/fantasy-scroll'
@@ -14,7 +16,7 @@ export function NotFoundPage() {
         </p>
       </FantasyScroll>
       <Button asChild>
-        <Link to={WEB_ROUTES.home}>返回首页</Link>
+        <Link href={WEB_ROUTES.home}>返回首页</Link>
       </Button>
     </div>
   )

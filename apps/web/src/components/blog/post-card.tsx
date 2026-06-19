@@ -1,4 +1,6 @@
-import { Link } from 'react-router-dom'
+'use client'
+
+import Link from 'next/link'
 import type { PostSummary } from '@my-blog/shared'
 import { WEB_ROUTES } from '@my-blog/shared'
 import { Badge } from '@/components/ui/badge'
@@ -23,7 +25,7 @@ export function PostCard({ post }: PostCardProps) {
       <div className="space-y-3">
         <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
           {post.category && (
-            <Link to={WEB_ROUTES.category(post.category.slug)}>
+            <Link href={WEB_ROUTES.category(post.category.slug)}>
               <Badge variant="guild">{post.category.name}</Badge>
             </Link>
           )}
@@ -31,7 +33,7 @@ export function PostCard({ post }: PostCardProps) {
         </div>
         <h2 className="font-display text-xl leading-snug">
           <Link
-            to={WEB_ROUTES.post(post.slug)}
+            href={WEB_ROUTES.post(post.slug)}
             className="text-foreground transition-colors hover:text-primary"
           >
             {post.title}
@@ -45,7 +47,7 @@ export function PostCard({ post }: PostCardProps) {
         {post.tags.length > 0 && (
           <div className="flex flex-wrap gap-2 pt-1">
             {post.tags.map((tag) => (
-              <Link key={tag.id} to={WEB_ROUTES.tag(tag.slug)}>
+              <Link key={tag.id} href={WEB_ROUTES.tag(tag.slug)}>
                 <Badge variant="spell">{tag.name}</Badge>
               </Link>
             ))}

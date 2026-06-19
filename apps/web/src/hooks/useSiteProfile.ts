@@ -1,5 +1,7 @@
+'use client'
+
 import { useQuery } from '@tanstack/react-query'
-import { useMatch } from 'react-router-dom'
+import { usePathname } from 'next/navigation'
 import type { SiteProfile } from '@my-blog/shared'
 import { ApiError, api } from '@/lib/api'
 import { SITE_PROFILE_FALLBACK } from '@/lib/profile'
@@ -7,7 +9,9 @@ import { SITE_PROFILE_FALLBACK } from '@/lib/profile'
 const PROFILE_STALE_MS = 5 * 60 * 1000
 
 export function useSiteProfile() {
-  const onProfileRoute = Boolean(useMatch({ path: '/profile', end: false }))
+  const pathname = usePathname()
+  const onProfileRoute =
+    pathname === '/profile' || pathname.startsWith('/profile/')
 
   return useQuery({
     queryKey: ['profile'],

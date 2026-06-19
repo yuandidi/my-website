@@ -1,5 +1,6 @@
+'use client'
+
 import { useState } from 'react'
-import { useParams } from 'react-router-dom'
 import { PostCard } from '@/components/blog/post-card'
 import {
   PostListSkeleton,
@@ -8,8 +9,11 @@ import {
 import { Pagination } from '@/components/blog/pagination'
 import { useTagPosts, useTags } from '@/hooks/usePosts'
 
-export function TagPage() {
-  const { slug = '' } = useParams()
+interface TagPageProps {
+  slug: string
+}
+
+export function TagPage({ slug }: TagPageProps) {
   const [page, setPage] = useState(1)
   const { data: tags } = useTags()
   const { data, isLoading, isError, error, refetch } = useTagPosts(slug, {

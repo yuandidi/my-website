@@ -7,6 +7,10 @@ function splitPath(value: string): string[] {
   return value.split('/').filter(Boolean);
 }
 
+export function getApiPathFromNextParams(path?: string[]): string[] {
+  return path?.filter(Boolean) ?? []
+}
+
 export function getApiPath(req: VercelRequest): string[] {
   const fromRewrite = req.query[API_PATH_QUERY_KEY];
 

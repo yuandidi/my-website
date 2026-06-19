@@ -1,9 +1,13 @@
-import { Link, useLocation } from 'react-router-dom'
+'use client'
+
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { WEB_ROUTES } from '@my-blog/shared'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/hooks/useAuth'
 import { useSiteMeta } from '@/hooks/useSiteMeta'
 import { cn } from '@/lib/utils'
+
 interface SiteHeaderProps {
   className?: string
 }
@@ -11,11 +15,12 @@ interface SiteHeaderProps {
 export function SiteHeader({ className }: SiteHeaderProps) {
   const { data: siteMeta } = useSiteMeta()
   const categories = siteMeta?.categories
-  const { pathname } = useLocation()
+  const pathname = usePathname()
   const { user, isLoggedIn, login, logout, isLoading, isDeveloper } = useAuth()
   const isProfileRoute =
     pathname === WEB_ROUTES.profile || pathname === WEB_ROUTES.profileEdit
   const isAdminRoute = pathname.startsWith('/admin/posts')
+
   return (
     <header
       className={cn(
@@ -26,7 +31,7 @@ export function SiteHeader({ className }: SiteHeaderProps) {
       <div className="fantasy-header-ornament h-6 w-full" aria-hidden />
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-4 py-3">
         <Link
-          to={WEB_ROUTES.profile}
+          href={WEB_ROUTES.profile}
           className="group flex items-center gap-2 font-display text-xl tracking-wide"
         >
           <img
@@ -39,7 +44,7 @@ export function SiteHeader({ className }: SiteHeaderProps) {
         </Link>
         <nav className="flex flex-wrap items-center gap-4 text-sm font-medium">
           <Link
-            to={WEB_ROUTES.home}
+            href={WEB_ROUTES.home}
             className={cn(
               'fantasy-nav-link',
               pathname === WEB_ROUTES.home && 'fantasy-nav-link-active',
@@ -48,7 +53,7 @@ export function SiteHeader({ className }: SiteHeaderProps) {
             首页
           </Link>
           <Link
-            to={WEB_ROUTES.profile}
+            href={WEB_ROUTES.profile}
             className={cn(
               'fantasy-nav-link',
               isProfileRoute && 'fantasy-nav-link-active',
@@ -58,7 +63,7 @@ export function SiteHeader({ className }: SiteHeaderProps) {
           </Link>
           {isDeveloper && (
             <Link
-              to={WEB_ROUTES.postsAdmin}
+              href={WEB_ROUTES.postsAdmin}
               className={cn(
                 'fantasy-nav-link',
                 isAdminRoute && 'fantasy-nav-link-active',
@@ -72,7 +77,7 @@ export function SiteHeader({ className }: SiteHeaderProps) {
             return (
               <Link
                 key={category.id}
-                to={href}
+                href={href}
                 className={cn(
                   'fantasy-nav-link',
                   pathname === href && 'fantasy-nav-link-active',
@@ -82,8 +87,8 @@ export function SiteHeader({ className }: SiteHeaderProps) {
               </Link>
             )
           })}
-          {!isLoading && (
-            isLoggedIn ? (
+          {!isLoading &&
+            (isLoggedIn ? (
               <Button
                 variant="ghost"
                 size="sm"
@@ -101,8 +106,7 @@ export function SiteHeader({ className }: SiteHeaderProps) {
               >
                 登录
               </Button>
-            )
-          )}
+            ))}
         </nav>
       </div>
       <div className="fantasy-header-ornament h-4 w-full opacity-35" aria-hidden />

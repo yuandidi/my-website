@@ -2,7 +2,6 @@ import { randomUUID } from 'node:crypto';
 import type {
   AdminPostDetail,
   AdminPostSummary,
-  Category,
   CreatePostInput,
   PaginatedResponse,
   PostStatus,

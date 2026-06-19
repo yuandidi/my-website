@@ -1,4 +1,6 @@
-import { Link } from 'react-router-dom'
+'use client'
+
+import Link from 'next/link'
 import type { Tag } from '@my-blog/shared'
 import { WEB_ROUTES } from '@my-blog/shared'
 import { Badge } from '@/components/ui/badge'
@@ -18,7 +20,7 @@ export function TagCloud({ tags, className }: TagCloudProps) {
       </h2>
       <div className="mt-4 flex flex-wrap gap-2">
         {tags.map((tag) => (
-          <Link key={tag.id} to={WEB_ROUTES.tag(tag.slug)}>
+          <Link key={tag.id} href={WEB_ROUTES.tag(tag.slug)}>
             <Badge variant="spell" className="cursor-pointer">
               {tag.name}
             </Badge>

@@ -1,17 +1,5 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "installCommand": "pnpm install",
-  "buildCommand": "pnpm --filter @my-blog/shared build && pnpm --filter web build",
-  "outputDirectory": "apps/web/dist",
-  "framework": "vite",
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/index?__path=$1"
-    },
-    {
-      "source": "/((?!api/|assets/|favicon\\.(?:png|svg|ico)|fantasy-header-ornament\\.svg|pixel-noise\\.svg|world-map\\.png|icons\\.svg).*)",
-      "destination": "/index.html"
-    }
-  ]
+  "buildCommand": "pnpm --filter @my-blog/shared build && pnpm --filter web build"
 }

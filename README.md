@@ -1,13 +1,13 @@
 # My Blog
 
-Vercel 友好全栈博客：React + Vite 前台，Vercel Serverless Functions + Postgres 后端。
+Vercel 友好全栈博客：Next.js App Router 全栈，Postgres 后端。
 
 ## 技术栈
 
 | 层 | 技术 |
 |----|------|
-| 前端 | React 19、Vite、TypeScript、React Router、TanStack Query、shadcn/ui、Tailwind CSS |
-| 后端 | Vercel Serverless Functions（`/api`） |
+| 前端 | Next.js 15、React 19、TypeScript、TanStack Query、shadcn/ui、Tailwind CSS |
+| API | Next.js Route Handler（`app/api/[[...path]]`） |
 | 数据库 | Vercel Postgres（Neon） |
 | 架构 | pnpm Monorepo，**一条命令部署前后端** |
 
@@ -46,10 +46,10 @@ pnpm install
 cp .env.example .env
 pnpm docker:up          # 可选：本地 Postgres
 pnpm db:setup
-pnpm dev                # vercel dev，同时跑前端 + /api
+pnpm dev:web            # Next.js 开发（前端 + /api 同进程）
 ```
 
-仅跑前端：
+仅跑前端（含 API Route Handler）：
 
 ```bash
 pnpm dev:web
@@ -59,9 +59,8 @@ pnpm dev:web
 
 ```text
 my-blog/
-├── api/                # Vercel Serverless API
-├── lib/                # 数据库与业务逻辑
-├── apps/web/           # React 前台
+├── lib/                # 数据库与业务逻辑、API handlers
+├── apps/web/           # Next.js 全栈应用（src/app 路由 + API）
 ├── packages/shared/    # 共享类型
 └── scripts/            # schema / seed
 ```
@@ -82,10 +81,11 @@ my-blog/
 
 | 命令 | 说明 |
 |------|------|
-| `pnpm dev` | 本地全栈（vercel dev） |
+| `pnpm dev:web` | 本地开发（Next.js，含 `/api`） |
 | `pnpm deploy:vercel` | 生产部署 |
 | `pnpm db:setup` | 建表 + 种子数据 |
-| `pnpm build` | 仅构建前端 |
+| `pnpm build` | 构建 shared + web |
+| `pnpm check` | 本地复现 CI（build + typecheck + lint） |
 
 ## 开发 SOP
 
@@ -111,8 +111,8 @@ pnpm check   # 本地可复现：build + typecheck + web lint
 ```
 
 - 构建 `shared` + `web`
-- TypeScript 检查 `api/`、`lib/`
-- ESLint 检查 `apps/web`
+- TypeScript 检查 `lib/`、`scripts/`
+- Next.js build + ESLint 检查 `apps/web`
 
 ### CD 说明
 

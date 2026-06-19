@@ -1,4 +1,6 @@
-import { Link, useParams } from 'react-router-dom'
+'use client'
+
+import Link from 'next/link'
 import { WEB_ROUTES } from '@my-blog/shared'
 import { MarkdownContent } from '@/components/blog/markdown-content'
 import { Badge } from '@/components/ui/badge'
@@ -17,8 +19,11 @@ function formatDate(value: string | null) {
   }).format(new Date(value))
 }
 
-export function PostDetailPage() {
-  const { slug = '' } = useParams()
+interface PostDetailPageProps {
+  slug: string
+}
+
+export function PostDetailPage({ slug }: PostDetailPageProps) {
   const { data: post, isLoading, isError, error, refetch } = usePost(slug)
 
   if (isLoading) {
@@ -42,7 +47,7 @@ export function PostDetailPage() {
         />
         <div className="mt-4 text-center">
           <Button asChild variant="outline">
-            <Link to={WEB_ROUTES.home}>返回首页</Link>
+            <Link href={WEB_ROUTES.home}>返回首页</Link>
           </Button>
         </div>
       </div>
@@ -55,7 +60,7 @@ export function PostDetailPage() {
         <div className="space-y-4">
           <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
             {post.category && (
-              <Link to={WEB_ROUTES.category(post.category.slug)}>
+              <Link href={WEB_ROUTES.category(post.category.slug)}>
                 <Badge variant="guild">{post.category.name}</Badge>
               </Link>
             )}
@@ -70,7 +75,7 @@ export function PostDetailPage() {
           {post.tags.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {post.tags.map((tag) => (
-                <Link key={tag.id} to={WEB_ROUTES.tag(tag.slug)}>
+                <Link key={tag.id} href={WEB_ROUTES.tag(tag.slug)}>
                   <Badge variant="spell">{tag.name}</Badge>
                 </Link>
               ))}
@@ -85,7 +90,7 @@ export function PostDetailPage() {
 
       <div className="mt-8 text-center">
         <Button asChild variant="outline">
-          <Link to={WEB_ROUTES.home}>返回首页</Link>
+          <Link href={WEB_ROUTES.home}>返回首页</Link>
         </Button>
       </div>
     </article>

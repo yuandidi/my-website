@@ -9,19 +9,18 @@ alwaysApply: true
 
 ```
 my-blog/
-├── api/               # Vercel Serverless API（生产）
-├── lib/               # 服务端共享逻辑（DB、业务查询）
+├── lib/               # 服务端共享逻辑（DB、业务查询、API handlers）
 ├── scripts/           # schema.sql、seed、db-push
-├── apps/web/          # React + Vite 前端
+├── apps/web/          # Next.js App Router 全栈（src/app 页面 + API）
 ├── apps/api/          # NestJS（本地参考，生产不依赖）
 ├── packages/shared/   # 前后端共享类型与 API 路由常量
-└── vercel.json        # Vercel 构建与路由
+└── vercel.json        # Vercel 构建命令
 ```
 
 ## 技术栈
 
 - **包管理**: pnpm workspace，Node >= 20
-- **生产部署**: Vercel（前端 + `/api` Serverless + Postgres）
+- **生产部署**: Vercel（Next.js 全栈 + Postgres）
 - **共享包**: `@my-blog/shared` — 接口类型、`API_ROUTES`、分页结构
 - **本地可选**: Docker Postgres（`pnpm docker:up`）
 
@@ -29,17 +28,16 @@ my-blog/
 
 - API 响应类型以 `@my-blog/shared` 为准
 - 路由常量统一在 `packages/shared/src/index.ts` 的 `API_ROUTES` / `WEB_ROUTES` 维护，前后端勿硬编码路径
-- 新增/变更 API 字段时：先改 shared 类型 → 再改 `lib/blog.ts` 与 `api/` handlers → 最后改前端
+- 新增/变更 API 字段时：先改 shared 类型 → 再改 `lib/` handlers → 最后改前端
 
 ## 常用命令
 
 ```bash
-pnpm dev              # vercel dev（本地全栈）
-pnpm check             # 本地复现 CI
+pnpm dev:web          # Next.js 本地开发（含 /api）
+pnpm check            # 本地复现 CI
 pnpm deploy:vercel    # 手动触发生产部署（通常由 Vercel CD 自动完成）
 pnpm build            # 构建 shared + web
 pnpm db:setup         # 建表 + seed（本地需连接串；生产见 vercel-deploy.mdc）
-pnpm dev:web          # 仅前端
 ```
 
 ## 改动原则
@@ -55,6 +53,6 @@ pnpm dev:web          # 仅前端
 
 ## 环境
 
-- 生产：前后端同域，`VITE_API_URL=/api`
-- 本地：`vercel dev` 或 `pnpm dev:web` + 本地/云端 Postgres
+- 生产：前后端同域，前端固定请求 `/api`
+- 本地：`pnpm dev:web` + 本地/云端 Postgres
 - 数据库环境变量：`POSTGRES_URL` 或 `DATABASE_URL`
