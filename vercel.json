@@ -6,6 +6,10 @@
   "framework": "vite",
   "rewrites": [
     {
+      "source": "/api/(.*)",
+      "destination": "/api/index?__path=$1"
+    },
+    {
       "source": "/((?!api/|assets/|favicon\\.(?:png|svg|ico)|fantasy-header-ornament\\.svg|pixel-noise\\.svg|world-map\\.png|icons\\.svg).*)",
       "destination": "/index.html"
     }

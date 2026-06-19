@@ -1,24 +1,19 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import type { UpdateProfileInput } from '@my-blog/shared';
-import { getSiteProfile, updateSiteProfile } from '../../lib/profile-store';
-import { hasProfileUpdates } from '../../lib/profile-validation';
+import { getSiteProfile, updateSiteProfile } from '../profile-store';
+import { hasProfileUpdates } from '../profile-validation';
 import {
   badRequest,
   notFound,
   parseJsonBody,
   requireDeveloper,
   withMethods,
-} from '../../lib/http';
+} from '../http';
 
-export const config = {
-  api: {
-    bodyParser: {
-      sizeLimit: '1mb',
-    },
-  },
-};
-
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export async function handleProfileRoute(
+  req: VercelRequest,
+  res: VercelResponse,
+) {
   await withMethods(req, res, {
     GET: async () => {
       const profile = await getSiteProfile();

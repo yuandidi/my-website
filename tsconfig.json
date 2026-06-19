@@ -9,5 +9,6 @@
     "resolveJsonModule": true,
     "types": ["node"]
   },
-  "include": ["api/**/*", "lib/**/*", "scripts/**/*"]
+  "include": ["api/**/*", "lib/**/*", "scripts/**/*"],
+  "exclude": ["**/*.test.ts"]
 }
