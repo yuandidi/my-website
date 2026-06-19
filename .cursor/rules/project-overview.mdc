@@ -38,7 +38,7 @@ pnpm dev              # vercel dev（本地全栈）
 pnpm check             # 本地复现 CI
 pnpm deploy:vercel    # 手动触发生产部署（通常由 Vercel CD 自动完成）
 pnpm build            # 构建 shared + web
-pnpm db:setup         # 建表 + seed（需 POSTGRES_URL）
+pnpm db:setup         # 建表 + seed（本地需连接串；生产见 vercel-deploy.mdc）
 pnpm dev:web          # 仅前端
 ```
 
@@ -51,6 +51,7 @@ pnpm dev:web          # 仅前端
 - **软件工程规范**：见 `software-engineering.mdc`
 - **测试规范**：见 `testing.mdc`
 - **Git / PR 规范**：见 `git-pr.mdc`
+- **Vercel 部署与运维**：见 `vercel-deploy.mdc`（环境变量陷阱、DB 初始化、生产验证）
 
 ## 环境
 

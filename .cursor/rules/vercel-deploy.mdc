@@ -1,0 +1,118 @@
+---
+description: Vercel 部署与 Postgres 运维（环境变量、DB 初始化、CLI 陷阱、生产验证）
+globs: api/**/*,lib/**/*,scripts/**/*,vercel.json,package.json,.env.example
+alwaysApply: false
+---
+
+# Vercel 部署与运维
+
+本仓库生产路径：**Vite 静态站 + `/api` Serverless Functions + Vercel Postgres（Neon）**。
+处理部署、环境变量、数据库初始化或生产 API 故障时，优先遵循本节。
+
+## 架构要点
+
+- 前端构建产物：`apps/web/dist`（见 `vercel.json`）
+- API：`api/` 目录，每个文件对应一个 Serverless Function
+- 业务逻辑：`lib/blog.ts`、`lib/db.ts`；建表/种子：`lib/setup.ts`
+- 生产域名示例：`https://my-blog-smoky-theta.vercel.app`
+- Vercel 项目：`yuandidis-projects/my-blog`
+
+## 环境变量（常见陷阱）
+
+| 变量 | 说明 |
+|------|------|
+| `POSTGRES_URL` | Vercel Postgres 集成自动注入（生产 Runtime 可用） |
+| `DATABASE_URL` | 同上，互为 fallback（见 `lib/db.ts`） |
+| `VITE_API_URL` | 生产设为 `/api`（同域，无需 CORS） |
+| `DB_SETUP_SECRET` | 保护 `POST /api/db-setup` 的密钥（仅 Production） |
+
+**AI 必须知道的限制：**
+
+1. **`vercel env pull` 不会暴露 Storage 集成变量的真实值**  
+   拉下来的 `.env.vercel.production` 中 `POSTGRES_URL=""` 是占位空串，不是解密后的连接串。
+
+2. **空字符串会阻断 fallback**  
+   `lib/db.ts` 用 `?.trim()` 处理，避免空 `POSTGRES_URL` 覆盖有效的 `DATABASE_URL`。
+
+3. **关联 Postgres 后必须 Redeploy**  
+   新注入的环境变量只在重新部署后的 Runtime 生效；`health` 仍 500 时先触发部署。
+
+4. **本地 `pnpm db:setup` 连生产库的两种方式**  
+   - **推荐（无需连接串）**：调用生产 `POST /api/db-setup`（见下文）  
+   - **手动**：Vercel Dashboard → Storage → Postgres → 复制 `POSTGRES_URL_NON_POOLING` 到本地 `.env`，再 `pnpm db:setup`
+
+5. **勿提交** `.env`、`.env.vercel`、`.env.vercel.*`（已在 `.gitignore`）
+
+## 生产数据库初始化
+
+本地 CLI 往往拿不到生产连接串，**优先用远程初始化端点**：
+
+```powershell
+# Windows PowerShell
+$headers = @{ "x-setup-secret" = "<DB_SETUP_SECRET>" }
+Invoke-RestMethod -Uri "https://<生产域名>/api/db-setup" -Method POST -Headers $headers
+```
+
+```bash
+# Unix
+curl -X POST https://<生产域名>/api/db-setup \
+  -H "x-setup-secret: <DB_SETUP_SECRET>"
+```
+
+成功响应示例：`{"status":"ok","categories":3,"tags":6,"posts":8}`
+
+- 逻辑在 `api/db-setup.ts`，复用 `lib/setup.ts`（`applySchema` + `seedDatabase`）
+- 与本地 `pnpm db:setup`（`scripts/db-push.ts` + `scripts/seed.ts`）行为一致
+- schema 变更或需重置种子数据时可再次调用（seed 会先清空再写入）
+
+## Vercel CLI 语法（Windows 特别注意）
+
+```bash
+# 部署
+pnpm deploy:vercel          # 即 vercel --prod
+
+# 查看环境变量（仅名称，不含解密值）
+pnpm dlx vercel@latest env ls
+
+# env run：在 Windows 上 -- 可能被 PowerShell 吞掉，用 cmd /c 包裹
+cmd /c "pnpm dlx vercel@latest env run -e production -- pnpm exec tsx scripts/db-push.ts"
+```
+
+`vercel env run` 在本地**不一定**能注入 Storage 集成变量的真实连接串；不要假设它能替代 `db-setup` 端点。
+
+## 部署与验证 SOP
+
+1. `pnpm check` 通过
+2. commit + push（`main` 与 `master` 同步，见 `git-pr.mdc`）
+3. 等待 Vercel CD 完成，或手动 `pnpm deploy:vercel`
+4. **若刚关联/变更 Postgres**：确认已 Redeploy
+5. **首次部署或 schema 变更**：执行 `POST /api/db-setup`
+6. 验证生产 API：
+
+| 端点 | 期望 |
+|------|------|
+| `GET /api/health` | `{"status":"ok","services":{"database":"ok"}}` |
+| `GET /api/posts` | 200 + 文章列表（非 500） |
+| `GET /api/categories` | 200 + 分类数组 |
+| `GET /api/tags` | 200 + 标签数组 |
+| `GET /` | 200，SPA 首页 |
+
+## 故障排查
+
+| 现象 | 可能原因 | 处理 |
+|------|----------|------|
+| `health` 500，`POSTGRES_URL is not configured` | 未关联 Postgres 或未 Redeploy | Dashboard 关联 Storage → Redeploy |
+| `health` 200，但 `/api/posts` 500 | 表未建 / 无 schema | 调用 `POST /api/db-setup` |
+| 本地 `db:setup` 报未配置 | `.env` 无有效连接串 | 用 `db-setup` 端点，或从 Dashboard 复制 `POSTGRES_URL_NON_POOLING` |
+| `vercel env pull` 后变量为空 | Storage 集成变量设计如此 | 不要依赖 pull 文件连生产库 |
+| PowerShell 下 `env run` 报 No command provided | `--` 解析问题 | 改用 `cmd /c "..."` |
+
+**`health` 只做 `SELECT 1`，不能代表业务表已存在。**
+
+## 官方参考
+
+- [Environment Variables](https://vercel.com/docs/projects/environment-variables)
+- [Vercel Postgres](https://vercel.com/docs/storage/vercel-postgres)
+- [CLI env](https://vercel.com/docs/cli/env)
+- [Serverless Functions](https://vercel.com/docs/functions)
+- [Vite on Vercel](https://vercel.com/docs/frameworks/vite)
