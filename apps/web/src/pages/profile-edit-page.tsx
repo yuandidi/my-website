@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, Navigate } from 'react-router-dom'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import type { ProfileLink, SiteProfile } from '@my-blog/shared'
 import { WEB_ROUTES } from '@my-blog/shared'
@@ -18,11 +18,21 @@ function parseSkills(value: string) {
     .filter(Boolean)
 }
 
+function sanitizeLinks(links: ProfileLink[]) {
+  return links
+    .map((link) => ({
+      label: link.label.trim(),
+      href: link.href.trim(),
+    }))
+    .filter((link) => link.label && link.href)
+}
+
 interface ProfileEditFormProps {
   profile: SiteProfile
 }
 
 function ProfileEditForm({ profile }: ProfileEditFormProps) {
+  const navigate = useNavigate()
   const queryClient = useQueryClient()
   const [name, setName] = useState(profile.name)
   const [title, setTitle] = useState(profile.title)
@@ -31,6 +41,7 @@ function ProfileEditForm({ profile }: ProfileEditFormProps) {
   const [skillsText, setSkillsText] = useState(profile.skills.join(', '))
   const [links, setLinks] = useState<ProfileLink[]>(profile.links)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
 
   const mutation = useMutation({
     mutationFn: () =>
@@ -40,13 +51,16 @@ function ProfileEditForm({ profile }: ProfileEditFormProps) {
         avatarUrl,
         bio,
         skills: parseSkills(skillsText),
-        links,
+        links: sanitizeLinks(links),
       }),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['profile'] })
+    onSuccess: async (updated) => {
+      queryClient.setQueryData(['profile'], updated)
       setErrorMessage(null)
+      setSuccessMessage('资料已保存')
+      navigate(`${WEB_ROUTES.profile}?saved=1`)
     },
     onError: (error) => {
+      setSuccessMessage(null)
       setErrorMessage(error instanceof Error ? error.message : '保存失败')
     },
   })
@@ -134,6 +148,9 @@ function ProfileEditForm({ profile }: ProfileEditFormProps) {
       {errorMessage && (
         <p className="text-sm text-destructive">{errorMessage}</p>
       )}
+      {successMessage && (
+        <p className="text-sm text-primary">{successMessage}</p>
+      )}
 
       <div className="flex flex-wrap gap-3">
         <Button
@@ -162,7 +179,7 @@ export function ProfileEditPage() {
   if (!isDeveloper) {
     return (
       <div className="mx-auto max-w-lg space-y-4 px-4 py-16 text-center">
-        <p className="text-muted-foreground">请先使用 GitHub 登录开发者账号。</p>
+        <p className="text-muted-foreground">请先使用 GitHub 登录。</p>
         <Button onClick={login}>GitHub 登录</Button>
         <div>
           <Button asChild variant="outline">

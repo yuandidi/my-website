@@ -27,14 +27,31 @@ export const DEFAULT_PROFILE = {
   links: [{ label: 'GitHub', href: 'https://github.com/yuandidi' }],
 } as const;
 
+function parseJsonArray<T>(value: unknown): T[] {
+  if (Array.isArray(value)) {
+    return value as T[];
+  }
+
+  if (typeof value === 'string') {
+    try {
+      const parsed = JSON.parse(value) as unknown;
+      return Array.isArray(parsed) ? (parsed as T[]) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  return [];
+}
+
 function mapProfileRow(row: ProfileRow): SiteProfile {
   return {
     name: row.name,
     title: row.title,
     avatarUrl: row.avatarUrl,
     bio: row.bio,
-    skills: row.skills,
-    links: row.links,
+    skills: parseJsonArray<string>(row.skills),
+    links: parseJsonArray<ProfileLink>(row.links),
     updatedAt: row.updatedAt.toISOString(),
   };
 }
@@ -125,10 +142,12 @@ export async function updateSiteProfile(userId: string, input: UpdateProfileInpu
     fields.push(`links = $${index++}::jsonb`);
     values.push(
       JSON.stringify(
-        input.links.map((link) => ({
-          label: link.label.trim(),
-          href: link.href.trim(),
-        })),
+        input.links
+          .map((link) => ({
+            label: link.label.trim(),
+            href: link.href.trim(),
+          }))
+          .filter((link) => link.label && link.href),
       ),
     );
   }

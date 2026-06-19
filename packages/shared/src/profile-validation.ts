@@ -52,6 +52,9 @@ export function validateUpdateProfileInput(input: UpdateProfileInput) {
       for (const link of input.links as ProfileLink[]) {
         const label = link.label?.trim() ?? '';
         const href = link.href?.trim() ?? '';
+        if (!label && !href) {
+          continue;
+        }
         if (label.length < 1 || label.length > 50) {
           errors.push('each link label must be 1-50 characters');
         }

@@ -21,6 +21,17 @@ function isHttpUrl(value: string) {
   }
 }
 
+export function hasProfileUpdates(input: UpdateProfileInput) {
+  return (
+    input.name !== undefined ||
+    input.title !== undefined ||
+    input.avatarUrl !== undefined ||
+    input.bio !== undefined ||
+    input.skills !== undefined ||
+    input.links !== undefined
+  );
+}
+
 export function validateUpdateProfileInput(input: UpdateProfileInput) {
   const errors: string[] = [];
 
@@ -64,6 +75,9 @@ export function validateUpdateProfileInput(input: UpdateProfileInput) {
       for (const link of input.links) {
         const label = link.label?.trim() ?? '';
         const href = link.href?.trim() ?? '';
+        if (!label && !href) {
+          continue;
+        }
         if (label.length < 1 || label.length > 50) {
           errors.push('each link label must be 1-50 characters');
         }
