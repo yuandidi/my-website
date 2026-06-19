@@ -28,7 +28,7 @@ my-blog/
 ## 跨端契约
 
 - API 响应类型以 `@my-blog/shared` 为准
-- 路由常量统一在 `packages/shared/src/index.ts` 的 `API_ROUTES` 维护，前后端勿硬编码路径
+- 路由常量统一在 `packages/shared/src/index.ts` 的 `API_ROUTES` / `WEB_ROUTES` 维护，前后端勿硬编码路径
 - 新增/变更 API 字段时：先改 shared 类型 → 再改 `lib/blog.ts` 与 `api/` handlers → 最后改前端
 
 ## 常用命令
