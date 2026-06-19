@@ -12,9 +12,10 @@ export function SiteHeader({ className }: SiteHeaderProps) {
   const { data: siteMeta } = useSiteMeta()
   const categories = siteMeta?.categories
   const { pathname } = useLocation()
-  const { user, isLoggedIn, login, logout, isLoading } = useAuth()
+  const { user, isLoggedIn, login, logout, isLoading, isDeveloper } = useAuth()
   const isProfileRoute =
     pathname === WEB_ROUTES.profile || pathname === WEB_ROUTES.profileEdit
+  const isAdminRoute = pathname.startsWith('/admin/posts')
   return (
     <header
       className={cn(
@@ -55,6 +56,17 @@ export function SiteHeader({ className }: SiteHeaderProps) {
           >
             关于
           </Link>
+          {isDeveloper && (
+            <Link
+              to={WEB_ROUTES.postsAdmin}
+              className={cn(
+                'fantasy-nav-link',
+                isAdminRoute && 'fantasy-nav-link-active',
+              )}
+            >
+              文章
+            </Link>
+          )}
           {categories?.map((category) => {
             const href = WEB_ROUTES.category(category.slug)
             return (

@@ -1,6 +1,11 @@
 import {
   API_ROUTES,
+  type AdminPostDetail,
+  type AdminPostSummary,
   type Category,
+  type CreateCategoryInput,
+  type CreatePostInput,
+  type CreateTagInput,
   type MeResponse,
   type PaginatedResponse,
   type PostDetail,
@@ -9,7 +14,10 @@ import {
   type SiteMetaResponse,
   type SiteProfile,
   type Tag,
+  type UpdateCategoryInput,
+  type UpdatePostInput,
   type UpdateProfileInput,
+  type UpdateTagInput,
 } from '@my-blog/shared'
 
 const API_BASE = import.meta.env.VITE_API_URL ?? '/api'
@@ -80,7 +88,63 @@ export const api = {
     )
   },
   getPost(slug: string) {
-    return request<PostDetail>(API_ROUTES.postBySlug(slug))
+    return request<PostDetail | AdminPostDetail>(API_ROUTES.postBySlug(slug))
+  },
+  getAdminPosts(params?: PostsQueryParams) {
+    return request<PaginatedResponse<AdminPostSummary>>(
+      `${API_ROUTES.postsAdmin}${buildQuery(params)}`,
+    )
+  },
+  createPost(input: CreatePostInput) {
+    return request<AdminPostDetail>(API_ROUTES.posts, {
+      method: 'POST',
+      body: JSON.stringify(input),
+    })
+  },
+  updatePost(slug: string, input: UpdatePostInput) {
+    return request<AdminPostDetail>(API_ROUTES.postBySlug(slug), {
+      method: 'PATCH',
+      body: JSON.stringify(input),
+    })
+  },
+  deletePost(slug: string) {
+    return request<void>(API_ROUTES.postBySlug(slug), {
+      method: 'DELETE',
+    })
+  },
+  createCategory(input: CreateCategoryInput) {
+    return request<Category>(API_ROUTES.categories, {
+      method: 'POST',
+      body: JSON.stringify(input),
+    })
+  },
+  updateCategory(slug: string, input: UpdateCategoryInput) {
+    return request<Category>(API_ROUTES.categoryBySlug(slug), {
+      method: 'PATCH',
+      body: JSON.stringify(input),
+    })
+  },
+  deleteCategory(slug: string) {
+    return request<void>(API_ROUTES.categoryBySlug(slug), {
+      method: 'DELETE',
+    })
+  },
+  createTag(input: CreateTagInput) {
+    return request<Tag>(API_ROUTES.tags, {
+      method: 'POST',
+      body: JSON.stringify(input),
+    })
+  },
+  updateTag(slug: string, input: UpdateTagInput) {
+    return request<Tag>(API_ROUTES.tagBySlug(slug), {
+      method: 'PATCH',
+      body: JSON.stringify(input),
+    })
+  },
+  deleteTag(slug: string) {
+    return request<void>(API_ROUTES.tagBySlug(slug), {
+      method: 'DELETE',
+    })
   },
   getCategories() {
     return request<Category[]>(API_ROUTES.categories)

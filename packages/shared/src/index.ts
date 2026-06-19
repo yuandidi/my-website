@@ -27,6 +27,60 @@ export interface PostDetail extends PostSummary {
   updatedAt: string;
 }
 
+export type PostStatus = 'DRAFT' | 'PUBLISHED';
+
+export interface AdminPostSummary extends PostSummary {
+  status: PostStatus;
+}
+
+export interface AdminPostDetail extends PostDetail {
+  status: PostStatus;
+  categoryId: string | null;
+  tagIds: string[];
+}
+
+export interface CreatePostInput {
+  title: string;
+  slug?: string;
+  excerpt?: string | null;
+  content: string;
+  coverImage?: string | null;
+  status?: PostStatus;
+  categoryId?: string | null;
+  tagIds?: string[];
+}
+
+export interface UpdatePostInput {
+  title?: string;
+  slug?: string;
+  excerpt?: string | null;
+  content?: string;
+  coverImage?: string | null;
+  status?: PostStatus;
+  categoryId?: string | null;
+  tagIds?: string[];
+}
+
+export interface CreateCategoryInput {
+  name: string;
+  slug?: string;
+}
+
+export interface UpdateCategoryInput {
+  name?: string;
+  slug?: string;
+}
+
+export interface CreateTagInput {
+  name: string;
+  slug?: string;
+}
+
+export interface UpdateTagInput {
+  name?: string;
+  slug?: string;
+}
+
 export interface PaginatedResponse<T> {
   data: T[];
   meta: {
@@ -87,10 +141,13 @@ export interface UpdateProfileInput {
 
 export const API_ROUTES = {
   posts: '/posts',
+  postsAdmin: '/posts/admin',
   postBySlug: (slug: string) => `/posts/${slug}`,
   categories: '/categories',
+  categoryBySlug: (slug: string) => `/categories/${slug}`,
   categoryPosts: (slug: string) => `/categories/${slug}/posts`,
   tags: '/tags',
+  tagBySlug: (slug: string) => `/tags/${slug}`,
   tagPosts: (slug: string) => `/tags/${slug}/posts`,
   health: '/health',
   siteMeta: '/site-meta',
@@ -108,9 +165,20 @@ export const WEB_ROUTES = {
   home: '/',
   profile: '/profile',
   profileEdit: '/profile/edit',
+  postsAdmin: '/admin/posts',
+  postNew: '/admin/posts/new',
+  postEdit: (slug: string) => `/admin/posts/${slug}/edit`,
   post: (slug: string) => `/posts/${slug}`,
   category: (slug: string) => `/categories/${slug}`,
   tag: (slug: string) => `/tags/${slug}`,
 } as const;
 
 export { validateUpdateProfileInput } from './profile-validation';
+export {
+  validateCreateCategoryInput,
+  validateCreatePostInput,
+  validateCreateTagInput,
+  validateUpdateCategoryInput,
+  validateUpdatePostInput,
+  validateUpdateTagInput,
+} from './post-validation';

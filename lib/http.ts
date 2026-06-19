@@ -32,6 +32,10 @@ export function forbidden(res: VercelResponse, message = 'Forbidden') {
   sendJson(res, 403, { message });
 }
 
+export function noContent(res: VercelResponse) {
+  res.status(204).end();
+}
+
 export function serverError(res: VercelResponse, error: unknown) {
   console.error(error);
   sendJson(res, 500, { message: 'Internal server error' });
@@ -98,6 +102,7 @@ export async function withMethods(
   req: VercelRequest,
   res: VercelResponse,
   handlers: Partial<Record<string, MethodHandler>>,
+  options?: { emptyStatus?: number },
 ) {
   const method = req.method ?? 'GET';
   const handler = handlers[method];
@@ -111,6 +116,11 @@ export async function withMethods(
     const data = await handler();
     if (data !== undefined) {
       sendJson(res, 200, data);
+      return;
+    }
+
+    if (options?.emptyStatus === 204) {
+      noContent(res);
     }
   } catch (error) {
     if (error instanceof Error) {
