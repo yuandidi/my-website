@@ -8,7 +8,7 @@ import type {
   UpdateTagInput,
 } from './index';
 
-const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const SLUG_PATTERN = /^[a-z0-9\u4e00-\u9fff]+(?:-[a-z0-9\u4e00-\u9fff]+)*$/;
 const MAX_CONTENT_LENGTH = 200_000;
 
 function isPostStatus(value: unknown): value is PostStatus {
@@ -31,7 +31,9 @@ function validateSlugField(
   }
 
   if (!SLUG_PATTERN.test(slug)) {
-    errors.push(`${field} must use lowercase letters, numbers, and hyphens`);
+    errors.push(
+      `${field} must use letters, numbers, hyphens, or Chinese characters`,
+    );
   }
 }
 

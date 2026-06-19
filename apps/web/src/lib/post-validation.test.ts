@@ -33,9 +33,27 @@ describe('validateCreatePostInput', () => {
       }),
     ).toThrow(/slug/)
   })
+
+  it('accepts Chinese slug', () => {
+    expect(() =>
+      validateCreatePostInput({
+        title: '第一篇',
+        slug: '第一篇blog',
+        content: 'content',
+      }),
+    ).not.toThrow()
+  })
 })
 
 describe('validateUpdatePostInput', () => {
+  it('accepts Chinese slug on update', () => {
+    expect(() =>
+      validateUpdatePostInput({
+        slug: '第一篇blog',
+      }),
+    ).not.toThrow()
+  })
+
   it('rejects empty content update', () => {
     expect(() =>
       validateUpdatePostInput({

@@ -10,7 +10,6 @@ import {
 } from '../post-store';
 import { hasPostUpdates } from '../post-validation';
 import {
-  badRequest,
   getAuthUser,
   getQueryNumber,
   getQueryString,
@@ -78,8 +77,7 @@ export async function handlePostsRoute(
           const body = await parseJsonBody<UpdatePostInput>(req);
 
           if (!hasPostUpdates(body)) {
-            badRequest(res, 'No post fields provided');
-            return;
+            throw new Error('No post fields provided');
           }
 
           return updatePost(slug, body);

@@ -138,8 +138,11 @@ export async function withMethods(
       }
       if (
         error.message.includes('must be') ||
+        error.message.includes('must use') ||
+        error.message.includes('must not be empty') ||
         error.message.includes('Invalid OAuth') ||
-        error.message.includes('not allowed')
+        error.message.includes('not allowed') ||
+        error.message === 'No post fields provided'
       ) {
         badRequest(res, error.message);
         return;
