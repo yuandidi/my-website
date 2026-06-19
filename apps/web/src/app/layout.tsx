@@ -35,7 +35,7 @@ export default function RootLayout({
         <Providers>
           <div className="fantasy-bg min-h-screen">
             <SiteHeader />
-            <main>{children}</main>
+            <main className="pt-[var(--site-header-height)]">{children}</main>
           </div>
         </Providers>
       </body>

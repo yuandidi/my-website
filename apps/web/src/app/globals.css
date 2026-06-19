@@ -60,6 +60,8 @@
     /* 预留滚动条槽位，避免短页/长页切换时内容宽度跳动 */
     scrollbar-gutter: stable;
     scrollbar-width: none;
+    /* 固定顶栏高度： ornament(24) + nav(56) + ornament(16) */
+    --site-header-height: 6rem;
   }
 
   html::-webkit-scrollbar {

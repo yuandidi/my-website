@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import { WEB_ROUTES } from '@my-blog/shared'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/hooks/useAuth'
+import { SiteSpirit } from '@/components/site-spirit'
 import { cn } from '@/lib/utils'
 
 interface SiteHeaderProps {
@@ -20,7 +21,8 @@ export function SiteHeader({ className }: SiteHeaderProps) {
   return (
     <header
       className={cn(
-        'sticky top-0 z-50 border-b-2 border-gold/40 bg-background/90 fantasy-pixel-shadow-sm backdrop-blur-md',
+        'fixed inset-x-0 top-0 z-50 w-full border-b-2 border-gold/40 bg-background/90 fantasy-pixel-shadow-sm backdrop-blur-md',
+        'overflow-visible',
         className,
       )}
     >
@@ -111,6 +113,7 @@ export function SiteHeader({ className }: SiteHeaderProps) {
         </nav>
       </div>
       <div className="fantasy-header-ornament h-4 w-full opacity-35" aria-hidden />
+      <SiteSpirit />
     </header>
   )
 }
