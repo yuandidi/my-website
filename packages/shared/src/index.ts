@@ -53,3 +53,12 @@ export const API_ROUTES = {
   tagPosts: (slug: string) => `/tags/${slug}/posts`,
   health: '/health',
 } as const;
+
+/** 前端页面路由（React Router），与 API 路径分离 */
+export const WEB_ROUTES = {
+  home: '/',
+  profile: '/profile',
+  post: (slug: string) => `/posts/${slug}`,
+  category: (slug: string) => `/categories/${slug}`,
+  tag: (slug: string) => `/tags/${slug}`,
+} as const;
