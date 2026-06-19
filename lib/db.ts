@@ -7,7 +7,8 @@ let pool: Pool | undefined;
 export function getPool() {
   if (!pool) {
     const connectionString =
-      process.env.POSTGRES_URL ?? process.env.DATABASE_URL;
+      process.env.POSTGRES_URL?.trim() ||
+      process.env.DATABASE_URL?.trim();
 
     if (!connectionString) {
       throw new Error('POSTGRES_URL or DATABASE_URL is not configured');

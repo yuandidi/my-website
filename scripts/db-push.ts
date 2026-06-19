@@ -1,13 +1,10 @@
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { applySchema } from '../lib/setup';
 import { getPool } from '../lib/db';
 
 async function main() {
-  const sql = readFileSync(resolve(__dirname, 'schema.sql'), 'utf8');
-  const pool = getPool();
-  await pool.query(sql);
+  await applySchema();
   console.log('Database schema applied');
-  await pool.end();
+  await getPool().end();
 }
 
 main().catch((error) => {
