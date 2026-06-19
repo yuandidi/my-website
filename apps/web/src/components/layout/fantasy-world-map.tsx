@@ -8,6 +8,7 @@ import {
   WORLD_HOTSPOTS,
   type WorldHotspot,
 } from '@/lib/world-map'
+import { track } from '@/lib/analytics'
 import { cn } from '@/lib/utils'
 
 interface WorldMapHotspotProps {
@@ -20,6 +21,12 @@ function WorldMapHotspot({ spot }: WorldMapHotspotProps) {
   return (
     <Link
       href={href}
+      onClick={() =>
+        track('world_map_click', {
+          spotId: spot.id,
+          label: spot.label,
+        })
+      }
       className="absolute z-10 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-primary"
       style={{ left: `${spot.x}%`, top: `${spot.y}%` }}
       aria-label={`${spot.label}，进入关于页`}
@@ -78,6 +85,12 @@ export function FantasyWorldMap({ className }: FantasyWorldMapProps) {
           <Link
             key={spot.id}
             href={getHotspotHref(spot)}
+            onClick={() =>
+              track('world_map_click', {
+                spotId: spot.id,
+                label: spot.label,
+              })
+            }
             className="rounded-none border-2 border-gold/40 bg-card px-3 py-1 font-pixel text-muted-foreground transition-colors hover:border-gold hover:text-gold fantasy-pixel-shadow-sm"
           >
             {spot.label}

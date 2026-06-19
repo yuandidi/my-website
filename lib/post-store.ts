@@ -29,6 +29,7 @@ function mapAdminPostSummary(row: Record<string, unknown>): AdminPostSummary {
     slug: String(row.slug),
     excerpt: row.excerpt ? String(row.excerpt) : null,
     coverImage: row.coverImage ? String(row.coverImage) : null,
+    viewCount: 0,
     publishedAt: row.publishedAt
       ? new Date(String(row.publishedAt)).toISOString()
       : null,

@@ -10,6 +10,7 @@ export interface PostSummary {
   slug: string;
   excerpt: string | null;
   coverImage: string | null;
+  viewCount: number;
   publishedAt: string | null;
   tags: Tag[];
 }
@@ -128,6 +129,8 @@ export const API_ROUTES = {
   health: '/health',
   siteMeta: '/site-meta',
   profile: '/profile',
+  analyticsEvents: '/analytics/events',
+  analyticsSummary: '/analytics/summary',
   auth: {
     github: '/auth/github',
     githubCallback: '/auth/github/callback',
@@ -147,7 +150,20 @@ export const WEB_ROUTES = {
   postEdit: (slug: string) => `/admin/posts/${slug}/edit`,
   post: (slug: string) => `/posts/${slug}`,
   tag: (slug: string) => `/tags/${slug}`,
+  analyticsAdmin: '/admin/analytics',
 } as const;
+
+export {
+  ANALYTICS_EVENTS,
+  isPublicAnalyticsPath,
+  validateTrackEventsPayload,
+  type AnalyticsDailyStat,
+  type AnalyticsEventInput,
+  type AnalyticsEventName,
+  type AnalyticsEventProperties,
+  type AnalyticsSummary,
+  type TrackEventsPayload,
+} from './analytics';
 
 export { validateUpdateProfileInput } from './profile-validation';
 export {

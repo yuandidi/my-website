@@ -10,6 +10,7 @@ import { FantasyScroll } from '@/components/layout/fantasy-scroll'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useAuth } from '@/hooks/useAuth'
 import { useSiteProfile } from '@/hooks/useSiteProfile'
+import { track } from '@/lib/analytics'
 import { QueryError } from '@/components/blog/post-list-states'
 
 export function ProfilePage() {
@@ -115,7 +116,17 @@ export function ProfilePage() {
           <div className="flex flex-wrap gap-3">
             {profile.links.map((link) => (
               <Button key={link.href} asChild variant="outline">
-                <a href={link.href} target="_blank" rel="noopener noreferrer">
+                <a
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() =>
+                    track('external_link_click', {
+                      href: link.href,
+                      label: link.label,
+                    })
+                  }
+                >
                   {link.label}
                 </a>
               </Button>

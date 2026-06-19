@@ -1,4 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
+import { handleAnalyticsRoute } from './api-handlers/analytics'
 import { handleAuthRoute } from './api-handlers/auth'
 import { handleHealthRoute } from './api-handlers/health'
 import { handlePostsRoute } from './api-handlers/posts'
@@ -37,6 +38,9 @@ export async function dispatchApiRoute(
       return
     case 'auth':
       await handleAuthRoute(req, res, rest)
+      return
+    case 'analytics':
+      await handleAnalyticsRoute(req, res, rest)
       return
     default:
       notFound(res, `API route "${resource}" not found`)

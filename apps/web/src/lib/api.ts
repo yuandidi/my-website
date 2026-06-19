@@ -2,6 +2,7 @@ import {
   API_ROUTES,
   type AdminPostDetail,
   type AdminPostSummary,
+  type AnalyticsSummary,
   type CreatePostInput,
   type CreateTagInput,
   type MeResponse,
@@ -152,6 +153,11 @@ export const api = {
     return request<{ ok: boolean }>(API_ROUTES.auth.logout, {
       method: 'POST',
     })
+  },
+  getAnalyticsSummary(days = 7) {
+    return request<AnalyticsSummary>(
+      `${API_ROUTES.analyticsSummary}?days=${days}`,
+    )
   },
 }
 

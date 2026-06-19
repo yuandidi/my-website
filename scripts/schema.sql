@@ -123,3 +123,20 @@ DO $$ BEGIN
     FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 EXCEPTION WHEN duplicate_object THEN NULL;
 END $$;
+
+CREATE TABLE IF NOT EXISTS "AnalyticsEvent" (
+    "id" TEXT NOT NULL,
+    "event" TEXT NOT NULL,
+    "path" TEXT NOT NULL,
+    "properties" JSONB NOT NULL DEFAULT '{}',
+    "sessionId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "AnalyticsEvent_pkey" PRIMARY KEY ("id")
+);
+
+CREATE INDEX IF NOT EXISTS "AnalyticsEvent_event_createdAt_idx"
+  ON "AnalyticsEvent" ("event", "createdAt");
+CREATE INDEX IF NOT EXISTS "AnalyticsEvent_path_createdAt_idx"
+  ON "AnalyticsEvent" ("path", "createdAt");
+CREATE INDEX IF NOT EXISTS "AnalyticsEvent_sessionId_createdAt_idx"
+  ON "AnalyticsEvent" ("sessionId", "createdAt");

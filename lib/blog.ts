@@ -4,6 +4,7 @@ import type {
   PostSummary,
   Tag,
 } from '@my-blog/shared';
+import { getPostViewCountsBySlugs } from './analytics-store';
 import { query } from './db';
 
 function mapTags(value: unknown): Tag[] {
@@ -21,11 +22,21 @@ function mapPostSummary(row: Record<string, unknown>): PostSummary {
     slug: String(row.slug),
     excerpt: row.excerpt ? String(row.excerpt) : null,
     coverImage: row.coverImage ? String(row.coverImage) : null,
+    viewCount: 0,
     publishedAt: row.publishedAt
       ? new Date(String(row.publishedAt)).toISOString()
       : null,
     tags: mapTags(row.tags),
   };
+}
+
+async function attachViewCounts<T extends PostSummary>(posts: T[]): Promise<T[]> {
+  const counts = await getPostViewCountsBySlugs(posts.map((post) => post.slug));
+
+  return posts.map((post) => ({
+    ...post,
+    viewCount: counts.get(post.slug) ?? 0,
+  }));
 }
 
 function mapPostDetail(row: Record<string, unknown>): PostDetail {
@@ -111,9 +122,10 @@ async function queryPosts(options: {
   );
 
   const total = countRows[0]?.total ?? 0;
+  const data = await attachViewCounts(rows.map(mapPostSummary));
 
   return {
-    data: rows.map(mapPostSummary),
+    data,
     meta: {
       page,
       limit,
@@ -151,7 +163,8 @@ export async function getPostBySlug(slug: string): Promise<PostDetail> {
     throw new Error(`Post "${slug}" not found`);
   }
 
-  return mapPostDetail(rows[0]);
+  const [detail] = await attachViewCounts([mapPostDetail(rows[0])]);
+  return detail;
 }
 
 export async function listTags(): Promise<Tag[]> {

@@ -16,7 +16,6 @@ export function SiteHeader({ className }: SiteHeaderProps) {
   const { user, isLoggedIn, login, logout, isLoading, isDeveloper } = useAuth()
   const isProfileRoute =
     pathname === WEB_ROUTES.profile || pathname === WEB_ROUTES.profileEdit
-  const isAdminRoute = pathname.startsWith('/admin/posts')
 
   return (
     <header
@@ -59,15 +58,26 @@ export function SiteHeader({ className }: SiteHeaderProps) {
             关于
           </Link>
           {isDeveloper && (
-            <Link
-              href={WEB_ROUTES.postsAdmin}
-              className={cn(
-                'fantasy-nav-link',
-                isAdminRoute && 'fantasy-nav-link-active',
-              )}
-            >
-              文章
-            </Link>
+            <>
+              <Link
+                href={WEB_ROUTES.postsAdmin}
+                className={cn(
+                  'fantasy-nav-link',
+                  pathname.startsWith('/admin/posts') && 'fantasy-nav-link-active',
+                )}
+              >
+                文章
+              </Link>
+              <Link
+                href={WEB_ROUTES.analyticsAdmin}
+                className={cn(
+                  'fantasy-nav-link',
+                  pathname.startsWith('/admin/analytics') && 'fantasy-nav-link-active',
+                )}
+              >
+                数据
+              </Link>
+            </>
           )}
           <Link
             href={WEB_ROUTES.blog}

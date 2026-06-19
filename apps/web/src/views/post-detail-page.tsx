@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect } from 'react'
 import Link from 'next/link'
 import { WEB_ROUTES } from '@my-blog/shared'
 import { MarkdownContent } from '@/components/blog/markdown-content'
@@ -9,6 +10,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { QueryError } from '@/components/blog/post-list-states'
 import { FantasyScroll } from '@/components/layout/fantasy-scroll'
 import { usePost } from '@/hooks/usePosts'
+import { track } from '@/lib/analytics'
 
 function formatDate(value: string | null) {
   if (!value) return ''
@@ -25,6 +27,16 @@ interface PostDetailPageProps {
 
 export function PostDetailPage({ slug }: PostDetailPageProps) {
   const { data: post, isLoading, isError, error, refetch } = usePost(slug)
+  const postSlug = post?.slug
+  const postTitle = post?.title
+
+  useEffect(() => {
+    if (!postSlug) {
+      return
+    }
+
+    track('post_view', { slug: postSlug, title: postTitle ?? '' })
+  }, [postSlug, postTitle])
 
   if (isLoading) {
     return (

@@ -10,6 +10,7 @@ import {
 import { PostTagFilter } from '@/components/blog/post-tag-filter'
 import { Pagination } from '@/components/blog/pagination'
 import { usePosts, useTags } from '@/hooks/usePosts'
+import { track } from '@/lib/analytics'
 
 export function BlogPage() {
   const router = useRouter()
@@ -32,6 +33,10 @@ export function BlogPage() {
   }, [selectedTag])
 
   function handleTagSelect(slug: string | null) {
+    if (slug) {
+      track('tag_filter', { slug })
+    }
+
     const params = new URLSearchParams(searchParams.toString())
 
     if (slug) {
