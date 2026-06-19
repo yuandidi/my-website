@@ -37,7 +37,7 @@ alwaysApply: true
 
 功能、部署或重构任务**完成后**，按以下顺序收尾（用户明确说「不要提交」时跳过）：
 
-1. **验证**：`pnpm build`（或任务相关的 lint / test）通过
+1. **验证**：`pnpm check` 通过
 2. **拆分 commit**：按原子提交原则拆成 1～多个 commit（见上文 type/scope）
 3. **推送**：`git push origin main`（若远程默认分支为 `master`，同步 `git push origin main:master`）
 4. **确认**：`git status` 干净（除刻意忽略的本地文件）
@@ -84,9 +84,15 @@ git push origin main:master   # 远程默认分支为 master 时
 ### PR 质量要求
 
 - 范围聚焦：Reviewer 能在 15 分钟内理解
+- **CI 全绿**：GitHub Actions `CI` workflow 通过后再合并
 - 含测试：bug 修复与核心逻辑变更须附带测试（见 `testing.mdc`）
 - 契约变更：shared 类型变更须在 PR 中说明前后端影响
 - CI 全绿后再请求 Review
+
+## CI / CD
+
+- **CI**：GitHub Actions — `pnpm check`（build + typecheck + web lint），见 `.github/workflows/ci.yml`
+- **CD**：Vercel 关联 `main` 分支，push 后自动部署；环境变量在 Vercel Dashboard 维护
 
 ## 禁止操作
 

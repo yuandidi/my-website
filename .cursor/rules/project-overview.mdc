@@ -35,7 +35,8 @@ my-blog/
 
 ```bash
 pnpm dev              # vercel dev（本地全栈）
-pnpm deploy:vercel    # 生产部署前后端
+pnpm check             # 本地复现 CI
+pnpm deploy:vercel    # 手动触发生产部署（通常由 Vercel CD 自动完成）
 pnpm build            # 构建 shared + web
 pnpm db:setup         # 建表 + seed（需 POSTGRES_URL）
 pnpm dev:web          # 仅前端

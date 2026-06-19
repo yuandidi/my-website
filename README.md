@@ -97,6 +97,29 @@ my-blog/
 
 详见仓库内 `.cursor/rules/git-pr.mdc`。
 
+## CI / CD
+
+| 环节 | 工具 | 触发时机 |
+|------|------|----------|
+| **CI** | GitHub Actions（[`.github/workflows/ci.yml`](.github/workflows/ci.yml)） | `push` / `pull_request` 到 `main` / `master` |
+| **CD** | Vercel（已关联 GitHub 仓库） | `main` 分支 push 后自动部署 |
+
+### CI 检查项
+
+```bash
+pnpm check   # 本地可复现：build + typecheck + web lint
+```
+
+- 构建 `shared` + `web`
+- TypeScript 检查 `api/`、`lib/`
+- ESLint 检查 `apps/web`
+
+### CD 说明
+
+- 合并到 `main` 后 Vercel 自动构建并发布生产环境
+- 环境变量（如 `POSTGRES_URL`）在 Vercel Dashboard 配置
+- 数据库迁移仍须手动执行 `pnpm db:setup`（一次性或 schema 变更时）
+
 ## 二期规划
 
 - 用户认证与后台管理
