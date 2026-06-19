@@ -1,0 +1,26 @@
+{
+  "name": "my-blog",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm run --parallel dev",
+    "build": "pnpm run --filter @my-blog/shared build && pnpm run --filter api build && pnpm run --filter web build",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "db:migrate": "dotenv -e .env -- pnpm --filter api exec prisma migrate dev --name init",
+    "db:seed": "dotenv -e .env -- pnpm --filter api exec prisma db seed",
+    "db:setup": "pnpm db:migrate && pnpm db:seed"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@prisma/client",
+      "@prisma/engines",
+      "prisma"
+    ]
+  },
+  "devDependencies": {
+    "dotenv-cli": "^8.0.0"
+  }
+}
