@@ -8,13 +8,13 @@ export function NotFoundPage() {
     <div className="mx-auto flex min-h-[50vh] max-w-lg flex-col items-center justify-center gap-6 px-4 py-16 text-center">
       <FantasyScroll innerClassName="text-center">
         <p className="font-display text-5xl text-gold">404</p>
-        <h1 className="mt-3 font-display text-xl">这片迷雾中似乎没有路…</h1>
+        <h1 className="mt-3 font-display text-xl">页面不存在</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          卷轴消散了，或是你误入了未开启的秘境
+          你访问的页面不存在或已被移除
         </p>
       </FantasyScroll>
       <Button asChild>
-        <Link to={WEB_ROUTES.home}>回到小屋</Link>
+        <Link to={WEB_ROUTES.home}>返回首页</Link>
       </Button>
     </div>
   )

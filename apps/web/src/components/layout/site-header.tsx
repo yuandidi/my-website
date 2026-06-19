@@ -40,7 +40,7 @@ export function SiteHeader({ className }: SiteHeaderProps) {
               pathname === WEB_ROUTES.home && 'fantasy-nav-link-active',
             )}
           >
-            大陆
+            首页
           </Link>
           <Link
             to={WEB_ROUTES.profile}
@@ -49,7 +49,7 @@ export function SiteHeader({ className }: SiteHeaderProps) {
               pathname === WEB_ROUTES.profile && 'fantasy-nav-link-active',
             )}
           >
-            档案
+            关于
           </Link>
           {categories?.map((category) => {
             const href = WEB_ROUTES.category(category.slug)

@@ -38,12 +38,12 @@ export function PostDetailPage() {
     return (
       <div className="mx-auto max-w-3xl px-4 py-8">
         <QueryError
-          message={error instanceof Error ? error.message : '卷轴已消散于迷雾中…'}
+          message={error instanceof Error ? error.message : '文章不存在'}
           onRetry={() => refetch()}
         />
         <div className="mt-4 text-center">
           <Button asChild variant="outline">
-            <Link to={WEB_ROUTES.home}>回到小屋</Link>
+            <Link to={WEB_ROUTES.home}>返回首页</Link>
           </Button>
         </div>
       </div>
@@ -86,7 +86,7 @@ export function PostDetailPage() {
 
       <div className="mt-8 text-center">
         <Button asChild variant="outline">
-          <Link to={WEB_ROUTES.home}>回到小屋</Link>
+          <Link to={WEB_ROUTES.home}>返回首页</Link>
         </Button>
       </div>
     </article>

@@ -9,11 +9,6 @@ describe('profile', () => {
     expect(SITE_PROFILE.bio).toBeTruthy()
   })
 
-  it('keeps featured post slugs unique', () => {
-    const slugs = SITE_PROFILE.featuredPosts.map((post) => post.slug)
-    expect(new Set(slugs).size).toBe(slugs.length)
-  })
-
   it('uses safe external link attributes target', () => {
     for (const link of SITE_PROFILE.links) {
       expect(link.href).toMatch(/^https?:\/\//)

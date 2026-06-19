@@ -19,38 +19,14 @@ export interface RegionHotspot extends HotspotBase {
 
 export type WorldHotspot = HutHotspot | RegionHotspot
 
-/** 分类 slug 与地图领地一一对应；坐标可按视觉再微调 */
+/** 地图热点；新增分类后在此补充 region 条目 */
 export const WORLD_HOTSPOTS: WorldHotspot[] = [
   {
     kind: 'hut',
     id: 'hut',
-    label: '秘密小屋',
+    label: '小屋',
     x: 28,
     y: 58,
-  },
-  {
-    kind: 'region',
-    id: 'tech',
-    slug: 'tech',
-    label: '北境工坊城',
-    x: 68,
-    y: 28,
-  },
-  {
-    kind: 'region',
-    id: 'notes',
-    slug: 'notes',
-    label: '迷雾森林',
-    x: 46,
-    y: 48,
-  },
-  {
-    kind: 'region',
-    id: 'life',
-    slug: 'life',
-    label: '南岸村镇',
-    x: 72,
-    y: 68,
   },
 ]
 

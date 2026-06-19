@@ -24,9 +24,8 @@ export function CategoryPage() {
     <div className="mx-auto max-w-3xl space-y-6 px-4 py-8">
       <div>
         <h1 className="fantasy-section-divider text-3xl font-bold text-gold">
-          公会档案：{categoryName}
+          分类：{categoryName}
         </h1>
-        <p className="mt-3 text-muted-foreground">此卷宗中记载的全部冒险日志</p>
       </div>
 
       {isLoading && <PostListSkeleton />}
@@ -40,7 +39,7 @@ export function CategoryPage() {
         <>
           <div className="space-y-4">
             {data.data.length === 0 ? (
-              <p className="text-muted-foreground">这片档案架上空空如也…</p>
+              <p className="text-muted-foreground">暂无文章</p>
             ) : (
               data.data.map((post) => <PostCard key={post.id} post={post} />)
             )}

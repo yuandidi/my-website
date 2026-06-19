@@ -31,13 +31,13 @@ interface QueryErrorProps {
 export function QueryError({ message, onRetry }: QueryErrorProps) {
   return (
     <FantasyScroll innerClassName="text-center">
-      <p className="font-display text-gold">魔力中断</p>
+      <p className="font-display text-gold">加载失败</p>
       <p className="mt-2 text-sm text-muted-foreground">
-        {message ?? '卷轴未能展开，请稍后再试'}
+        {message ?? '请稍后重试'}
       </p>
       {onRetry && (
         <Button className="mt-4" variant="outline" onClick={onRetry}>
-          重新施法
+          重试
         </Button>
       )}
     </FantasyScroll>

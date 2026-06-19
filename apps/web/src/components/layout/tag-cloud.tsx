@@ -14,7 +14,7 @@ export function TagCloud({ tags, className }: TagCloudProps) {
   return (
     <FantasyScroll className={cn(className)}>
       <h2 className="fantasy-section-divider font-display text-lg text-gold">
-        咒文印记
+        标签
       </h2>
       <div className="mt-4 flex flex-wrap gap-2">
         {tags.map((tag) => (

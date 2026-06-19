@@ -12,9 +12,9 @@ export function ProfilePage() {
     <div className="mx-auto max-w-3xl space-y-8 px-4 py-8">
       <div>
         <h1 className="fantasy-section-divider text-3xl font-bold text-gold">
-          小屋主人档案
+          关于
         </h1>
-        <p className="mt-3 text-muted-foreground">迪迪 · 秘密小屋的守卷人</p>
+        <p className="mt-3 text-muted-foreground">{SITE_PROFILE.title}</p>
       </div>
 
       <FantasyScroll innerClassName="space-y-6">
@@ -35,7 +35,7 @@ export function ProfilePage() {
         </div>
 
         <div>
-          <h3 className="font-display text-lg text-gold">习得咒文</h3>
+          <h3 className="font-display text-lg text-gold">技能</h3>
           <div className="mt-3 flex flex-wrap gap-2">
             {SITE_PROFILE.skills.map((skill) => (
               <Badge key={skill} variant="spell">
@@ -58,25 +58,9 @@ export function ProfilePage() {
         )}
       </FantasyScroll>
 
-      <FantasyScroll innerClassName="space-y-4">
-        <h3 className="font-display text-lg text-gold">精选卷轴</h3>
-        <ul className="space-y-3">
-          {SITE_PROFILE.featuredPosts.map((post) => (
-            <li key={post.slug}>
-              <Link
-                to={WEB_ROUTES.post(post.slug)}
-                className="font-display text-foreground transition-colors hover:text-primary"
-              >
-                {post.title}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </FantasyScroll>
-
       <div className="flex flex-wrap justify-center gap-3">
         <Button asChild variant="outline">
-          <Link to={WEB_ROUTES.home}>回到大陆纲要</Link>
+          <Link to={WEB_ROUTES.home}>返回首页</Link>
         </Button>
       </div>
     </div>

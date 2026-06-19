@@ -12,19 +12,12 @@ describe('world-map', () => {
     expect(getHotspotHref(hut!)).toBe('/profile')
   })
 
-  it('resolves region hotspots to category routes', () => {
-    for (const region of getRegionHotspots()) {
-      expect(getHotspotHref(region)).toBe(`/categories/${region.slug}`)
-    }
+  it('has no region hotspots until categories are configured', () => {
+    expect(getRegionHotspots()).toEqual([])
   })
 
   it('keeps unique hotspot ids', () => {
     const ids = WORLD_HOTSPOTS.map((spot) => spot.id)
     expect(new Set(ids).size).toBe(ids.length)
-  })
-
-  it('maps seed category slugs on the world map', () => {
-    const slugs = getRegionHotspots().map((region) => region.slug)
-    expect(slugs).toEqual(expect.arrayContaining(['tech', 'life', 'notes']))
   })
 })
