@@ -13,7 +13,10 @@ export class HealthController {
   async check() {
     const [db, redis] = await Promise.all([
       this.prisma.$queryRaw`SELECT 1`.then(() => 'ok').catch(() => 'error'),
-      this.redis.ping().then(() => 'ok').catch(() => 'error'),
+      this.redis
+        .ping()
+        .then(() => 'ok')
+        .catch(() => 'error'),
     ]);
 
     const healthy = db === 'ok' && redis === 'ok';

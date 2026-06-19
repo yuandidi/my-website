@@ -32,21 +32,19 @@ export function mapPostSummary(post: {
   };
 }
 
-export function mapPostDetail(
-  post: {
-    id: string;
-    title: string;
-    slug: string;
-    excerpt: string | null;
-    content: string;
-    coverImage: string | null;
-    publishedAt: Date | null;
-    createdAt: Date;
-    updatedAt: Date;
-    category: { id: string; name: string; slug: string } | null;
-    tags: { tag: { id: string; name: string; slug: string } }[];
-  },
-) {
+export function mapPostDetail(post: {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  content: string;
+  coverImage: string | null;
+  publishedAt: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+  category: { id: string; name: string; slug: string } | null;
+  tags: { tag: { id: string; name: string; slug: string } }[];
+}) {
   return {
     ...mapPostSummary(post),
     content: post.content,

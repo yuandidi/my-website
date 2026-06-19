@@ -34,9 +34,7 @@ export class PostsService {
   }
 
   private listCacheKey(query: PostsQueryDto) {
-    const hash = createHash('md5')
-      .update(JSON.stringify(query))
-      .digest('hex');
+    const hash = createHash('md5').update(JSON.stringify(query)).digest('hex');
     return `posts:list:${hash}`;
   }
 

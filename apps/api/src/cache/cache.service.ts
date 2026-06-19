@@ -18,11 +18,7 @@ export class CacheService {
   }
 
   async set<T>(key: string, value: T, ttlSeconds: number): Promise<void> {
-    await this.redis.set(
-      this.buildKey(key),
-      JSON.stringify(value),
-      ttlSeconds,
-    );
+    await this.redis.set(this.buildKey(key), JSON.stringify(value), ttlSeconds);
   }
 
   async del(key: string): Promise<void> {

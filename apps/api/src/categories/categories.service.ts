@@ -2,7 +2,11 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Category, PaginatedResponse, PostSummary } from '@my-blog/shared';
 import { CacheService } from '../cache/cache.service';
 import { PostsQueryDto } from '../common/posts-query.dto';
-import { mapPostSummary, postInclude, publishedPostWhere } from '../common/post.mapper';
+import {
+  mapPostSummary,
+  postInclude,
+  publishedPostWhere,
+} from '../common/post.mapper';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
