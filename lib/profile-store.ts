@@ -1,5 +1,6 @@
-import type { ProfileLink, SiteProfile, UpdateProfileInput } from '@my-blog/shared';
-import { validateUpdateProfileInput } from '@my-blog/shared';
+import type { ProfileLink, SiteProfile } from '@my-blog/shared';
+import type { UpdateProfileInput } from './profile-validation';
+import { validateUpdateProfileInput } from './profile-validation';
 import { query } from './db';
 
 interface ProfileRow {
