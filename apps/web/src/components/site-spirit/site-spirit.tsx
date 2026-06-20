@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo, useRef } from 'react'
 import { createSpiritEngine, useGameEngine } from './engine'
-import { getFrameMetrics } from './sprite-config'
+import { getSpriteRenderCache } from './engine/sprite/sprite-render-cache'
+import { getFrameMetrics, SPIRIT_SPRITE_SOURCES } from './sprite-config'
 import { SpriteView } from './sprite/sprite-view'
 import { usePcViewport } from './use-pc-viewport'
 
@@ -21,6 +22,10 @@ function SiteSpiritCanvas() {
     [],
   )
   const state = useGameEngine(engine)
+
+  useEffect(() => {
+    void getSpriteRenderCache().preload(SPIRIT_SPRITE_SOURCES)
+  }, [])
 
   useEffect(() => {
     const header = mountRef.current?.closest('header')

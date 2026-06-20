@@ -1,6 +1,8 @@
 'use client'
 
+import { useLayoutEffect, useRef } from 'react'
 import { cn } from '@/lib/utils'
+import { getSpriteRenderCache } from '../engine/sprite/sprite-render-cache'
 import { resolveSpriteSheetMetrics } from './sprite-sheet'
 import type { SpriteSheetConfig } from '../sprite-config.types'
 
@@ -19,26 +21,39 @@ export function SpriteView({
   className,
   'aria-label': ariaLabel = '编码女巫小精灵',
 }: SpriteViewProps) {
-  const { frameWidth, scale, displayWidth, displayHeight } =
-    resolveSpriteSheetMetrics(sheet)
-  const xOffset = sheet.crop.left + frameIndex * frameWidth
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const { displayWidth, displayHeight } = resolveSpriteSheetMetrics(sheet)
+
+  useLayoutEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+
+    const cache = getSpriteRenderCache()
+    if (cache.drawToCanvas(canvas, sheet, frameIndex, flipX)) return
+
+    let cancelled = false
+    void cache.preload([sheet.src]).then(() => {
+      if (!cancelled) {
+        cache.drawToCanvas(canvas, sheet, frameIndex, flipX)
+      }
+    })
+
+    return () => {
+      cancelled = true
+    }
+  }, [sheet, frameIndex, flipX])
 
   return (
-    <div
+    <canvas
+      ref={canvasRef}
       role="img"
       aria-label={ariaLabel}
+      width={displayWidth}
+      height={displayHeight}
       className={cn(
-        'image-pixelated pointer-events-none select-none bg-no-repeat',
+        'image-pixelated pointer-events-none select-none',
         className,
       )}
-      style={{
-        width: displayWidth,
-        height: displayHeight,
-        transform: flipX ? 'scaleX(-1)' : undefined,
-        backgroundImage: `url(${sheet.src})`,
-        backgroundSize: `${sheet.sheetWidth * scale}px ${sheet.sheetHeight * scale}px`,
-        backgroundPosition: `-${xOffset * scale}px -${sheet.crop.top * scale}px`,
-      }}
     />
   )
 }

@@ -20,6 +20,11 @@ export {
   WALK_RIGHT_STAFF_SPRITE_SHEET,
 }
 
+/** 所有小精灵雪碧图 src（去重），供渲染缓存预加载 */
+export const SPIRIT_SPRITE_SOURCES = [
+  ...new Set(Object.values(SPIRIT_STATE_SHEETS).map((sheet) => sheet.src)),
+] as const
+
 export function getFrameMetrics(sheet: SpriteSheetConfig) {
   const frameWidth = sheet.frameWidth
   const frameHeight = sheet.sheetHeight - sheet.crop.top - sheet.crop.bottom
