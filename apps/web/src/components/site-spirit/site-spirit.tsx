@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef } from 'react'
 import { createSpiritEngine, useGameEngine } from './engine'
 import { getFrameMetrics } from './sprite-config'
 import { SpriteView } from './sprite/sprite-view'
+import { usePcViewport } from './use-pc-viewport'
 
 /** 与 site-header 的 border-b-2 对齐，让脚/shadow 落在顶栏底边线上 */
 const HEADER_BORDER_PX = 2
@@ -13,7 +14,7 @@ function prefersReducedMotion(): boolean {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
 
-export function SiteSpirit() {
+function SiteSpiritCanvas() {
   const mountRef = useRef<HTMLDivElement>(null)
   const engine = useMemo(
     () => createSpiritEngine({ paused: prefersReducedMotion() }),
@@ -61,4 +62,14 @@ export function SiteSpirit() {
       </div>
     </div>
   )
+}
+
+export function SiteSpirit() {
+  const isPcViewport = usePcViewport()
+
+  if (!isPcViewport) {
+    return null
+  }
+
+  return <SiteSpiritCanvas />
 }

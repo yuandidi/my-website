@@ -4,6 +4,8 @@ export interface SpriteSheetConfig {
   sheetWidth: number
   sheetHeight: number
   frameWidth: number
+  /** 统一网格模式下每帧高度；未设时由 sheetHeight 与 crop 推算 */
+  frameHeight?: number
   crop: {
     top: number
     left: number

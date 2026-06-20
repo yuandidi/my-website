@@ -8,10 +8,10 @@ import {
   createInitialAnimationState,
   createSpriteAnimationSystem,
 } from '../sprite/sprite-animation-system'
-import { createGameEngine, type GameEngine } from '../core/game-engine'
+import { createGameEngine } from '../core/game-engine'
 import { SPIRIT_DEFAULT_MODE } from '../../spirit-modes'
 import { resolveSpiritVisual } from '../../spirit-visual-config'
-import type { FrameTick } from '../core/types'
+import type { FrameTick, GameEngine } from '../core/types'
 
 export type { SpiritEntityState, SpiritBehaviorState } from './spirit-behavior-system'
 
