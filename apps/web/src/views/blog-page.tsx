@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { PostCard } from '@/components/blog/post-card'
 import {
@@ -17,7 +17,13 @@ export function BlogPage() {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const selectedTag = searchParams.get('tag')
-  const [page, setPage] = useState(1)
+  const pageKey = selectedTag ?? '__all__'
+  const [pageByTag, setPageByTag] = useState<Record<string, number>>({})
+  const page = pageByTag[pageKey] ?? 1
+
+  const setPage = (nextPage: number) => {
+    setPageByTag((current) => ({ ...current, [pageKey]: nextPage }))
+  }
 
   const { data: tags } = useTags()
   const { data, isLoading, isError, error, refetch } = usePosts({
@@ -27,10 +33,6 @@ export function BlogPage() {
   })
 
   const activeTagName = tags?.find((tag) => tag.slug === selectedTag)?.name
-
-  useEffect(() => {
-    setPage(1)
-  }, [selectedTag])
 
   function handleTagSelect(slug: string | null) {
     if (slug) {

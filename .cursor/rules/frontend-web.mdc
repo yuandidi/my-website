@@ -1,35 +1,38 @@
 ---
-description: React + Vite 前端约定（路由、React Query、API 层、UI）
+description: 前端 Web 约定（apps/web，Next.js 16）
 globs: apps/web/**/*
 alwaysApply: false
 ---
 
 # 前端 Web 约定（apps/web）
 
+> Next.js 16 专项约定见 `nextjs-16.mdc`。
+
 ## 技术栈
 
-- React 19 函数组件 + TypeScript + Vite 8（ESM）
-- React Router 7 路由；TanStack Query 5 服务端状态
+- Next.js 16 App Router + React 19 + TypeScript
+- TanStack Query 5 服务端状态
 - Tailwind CSS 4 + `components/ui/`（shadcn 风格）；`cn()` 来自 `@/lib/utils`
 
 ## 分层架构（关注点分离）
 
 ```
-pages/        # 路由页面，组合组件与 hooks
+app/          # 路由入口（薄 page，组合 views）
+views/        # 页面级组合与四态
 components/   # 展示组件（blog/ layout/ ui/）
 hooks/        # React Query hooks，封装数据获取
 lib/api.ts    # 唯一 HTTP 入口，组件/hooks 不直接 fetch
 lib/utils.ts  # 纯工具函数
 ```
 
-**数据流**：Page → Hook → `api` → 后端。UI 组件不持有 API 细节。
+**数据流**：Page/View → Hook → `api` → `/api`。UI 不持有 API 细节。
 
 ## API 层
 
 - 所有请求经 `lib/api.ts` 的 `request<T>()`，统一错误处理（`response.ok` 检查）
 - 路径用 `@my-blog/shared` 的 `API_ROUTES`；类型用 shared 导出类型
-- 页面链接用 `WEB_ROUTES`；勿硬编码 `/posts`、`/categories`、`/tags`
-- Base URL：`import.meta.env.VITE_API_URL ?? '/api'`
+- 页面链接用 `WEB_ROUTES`；勿硬编码 `/posts`、`/tags`
+- Base URL：固定 `/api`（同域全栈）
 
 ```typescript
 // ✅ hooks 中
@@ -60,21 +63,19 @@ export function usePost(slug: string) {
 
 > **当前已禁用**全站进入动画与 `motion-*` 工具类（曾出现跳闪）。重新启用前勿添加页面级 `animation` 或路由淡入。
 
-后续若恢复，原则仍是：状态变化有过渡、尊重 `prefers-reduced-motion`、避免 >600ms 装饰动画。实现时先在单页试点，确认无跳闪再推广。
-
 ## 样式
 
 - 优先 Tailwind utility；复用 `components/ui/` 基础组件
-- 交互元素仅用轻量 `transition-colors` / `transition-shadow`，避免全局进入动画
+- 交互元素仅用轻量 `transition-colors` / `transition-shadow`
 - prose 内容区用 `@tailwindcss/typography`；Markdown 用 `react-markdown` + `remark-gfm`
 
 ## 测试与质量
 
-- Vitest + Testing Library 约定见 `testing.mdc`
+- Vitest 约定见 `testing.mdc`；lint 用 `eslint.config.mjs`（非 `next lint`）
 - 不重新定义 shared 已有类型；props 类型尽量从 shared 推导
 
 ## 禁止
 
-- 组件/page 内硬编码 API 路径或直接 `fetch`
+- 组件/view 内硬编码 API 路径或直接 `fetch`
 - 在 UI 层散落重复的数据获取逻辑（应提取 hook）
 - 直接 mutate state/props；忽略 error 态静默失败

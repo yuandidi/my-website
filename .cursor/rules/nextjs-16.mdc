@@ -1,0 +1,94 @@
+---
+description: Next.js 16 约定（本仓库 apps/web 已升级）
+globs: apps/web/**/*
+alwaysApply: false
+---
+
+# Next.js 16 约定（apps/web）
+
+本仓库 `apps/web` 使用 **Next.js 16**（Turbopack 为默认构建器）。升级说明与约束见本节。
+
+## 版本与环境
+
+| 项 | 要求 |
+|---|---|
+| Next.js | 16.x（与 `eslint-config-next` 同主版本） |
+| Node.js | >= 20.9（仓库 `engines` 为 `>=20`） |
+| React | 19.x |
+| TypeScript | 5.x |
+
+## 构建与开发
+
+```bash
+pnpm dev:web      # next dev（Turbopack 默认，无需 --turbo）
+pnpm build:web    # next build（Turbopack 默认）
+pnpm build:web -- --webpack   # 回退 Webpack（排查 Turbopack 问题时）
+```
+
+- 配置文件：`apps/web/next.config.mjs`（ESM，monorepo 需保留 `outputFileTracingRoot`）
+- **不在 `next build` 内跑 ESLint**；lint 由 `pnpm check` 的 `eslint --cache` 负责
+- `transpilePackages: ['@my-blog/shared']`；shared 类型/运行时指向源码（见 `packages/shared/package.json`）
+
+## 异步 Request API（强制）
+
+以下在 Next.js 16 中均为 **Promise**，必须 `await`（或客户端用 `React.use()`）：
+
+| API | 用法 |
+|-----|------|
+| 路由 `params` | `const { slug } = await params` |
+| `searchParams`（page props） | `const { q } = await searchParams` |
+| `cookies()` | `const store = await cookies()` |
+| `headers()` | `const list = await headers()` |
+| `draftMode()` | `const draft = await draftMode()` |
+
+```typescript
+// ✅ App Router page
+type PageProps = { params: Promise<{ slug: string }> }
+
+export default async function Page({ params }: PageProps) {
+  const { slug } = await params
+  return <Detail slug={slug} />
+}
+```
+
+客户端 `useSearchParams()` **不受此约束**（React hook，非 page props）。
+
+迁移 codemod（查漏补缺）：
+
+```bash
+npx @next/codemod@latest next-async-request-api apps/web
+```
+
+## ESLint
+
+- **已移除** `next lint`；使用 `eslint.config.mjs` + `eslint-config-next/core-web-vitals`（原生 flat config）
+- **勿**再用 `@eslint/eslintrc` / `FlatCompat` 桥接旧配置
+- `react-hooks/set-state-in-effect` 等规则更严：避免在 `useEffect` 内同步 `setState`，优先派生状态或按 key 分桶（参考 `blog-page.tsx` 分页）
+
+## 与本仓库架构相关的注意点
+
+- API：`app/api/[[...path]]` → `lib/dispatch-api` → `lib/api-handlers/*`（全栈同进程，Vercel 单 catch-all）
+- `lib/` 通过 `@lib/*` path 引入；类型检查走根目录 `tsc`（`typecheck:lib`）
+- 无 `middleware.ts`；若将来加网络边界层，Next 16 推荐新文件名 `proxy.ts`（`middleware` 已 deprecated）
+
+## 已废弃 / 勿用
+
+| 已废弃 | 替代 |
+|--------|------|
+| `next lint` | `pnpm --filter web lint`（ESLint CLI） |
+| `next.config.ts` + `eslint.ignoreDuringBuilds` | `next.config.mjs`；lint 在 CI `check` 中执行 |
+| `next dev --turbo` | `next dev`（Turbopack 默认） |
+| 同步访问 `params` / `cookies()` / `headers()` | 见上文 `await` |
+
+## 升级与回滚检查清单
+
+1. `pnpm check` / `pnpm check:full` 通过
+2. 本地 `pnpm dev:web`，抽查 `/`、`/blog`、`/posts/:slug`、`/api/health`
+3. 对比 `next build` 输出路由表与 First Load JS（Turbopack 体积异常时用 `--webpack` 对比）
+4. Vercel 预览部署后验证 API 与 OAuth 回调
+
+## 参考
+
+- [Next.js 16 发布说明](https://nextjs.org/blog/next-16)
+- [ESLint 配置](https://nextjs.org/docs/app/api-reference/config/eslint)
+- 仓库内：`project-overview.mdc`、`frontend-web.mdc`
