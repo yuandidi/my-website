@@ -1,6 +1,6 @@
 ---
 description: 测试规范（单元/集成/E2E、命名、Mock、覆盖率）
-globs: "{apps,packages}/**/*"
+globs: "{apps,lib,packages}/**/*"
 alwaysApply: false
 ---
 
@@ -28,28 +28,19 @@ E2E（少量）  ← HTTP 全链路、关键用户路径
 
 用户未要求时，不为 trivial 代码堆砌测试。
 
-## 后端（apps/api）
+## 后端（lib/）
 
-**框架**：Jest + `@nestjs/testing` + supertest
+**框架**：Vitest（经 `pnpm --filter web test` 运行，`vitest.config.ts` 包含 `lib/**/*.test.ts`）
 
 | 类型 | 文件位置 | 命令 |
 |------|----------|------|
-| 单元 | `src/**/*.spec.ts`（与源文件同目录） | `pnpm --filter api test` |
-| E2E | `test/**/*.e2e-spec.ts` | `pnpm --filter api test:e2e` |
+| 单元 | `lib/**/*.test.ts`（与源文件同目录） | `pnpm --filter web test` |
+| 路由分发 | `lib/dispatch-api.test.ts` | mock `api-handlers/*` |
+| Store | `lib/post-store.test.ts` 等 | mock `lib/db` 的 `query` |
 
-```typescript
-// Service 单元测试：mock 基础设施
-const prisma = { post: { findMany: jest.fn(), count: jest.fn() } };
-const cache = { wrap: jest.fn((_k, _t, fn) => fn()) };
-
-// E2E：复刻 main.ts 配置（prefix、ValidationPipe）
-app.setGlobalPrefix('api');
-app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
-```
-
-- Mock `PrismaService` / `CacheService`，不断言 Prisma 调用次数除非必要
-- E2E 断言 HTTP 状态码 + 响应结构（对齐 `@my-blog/shared` 类型）
-- E2E 需 DB/Redis 时先 `pnpm docker:up`；CI 中用 test 数据库
+- Mock `query`（`lib/db`），不断言 SQL 细节除非必要
+- 集成/E2E 断言 HTTP 状态码 + 响应结构（对齐 `@my-blog/shared` 类型）
+- 需 DB 时先 `pnpm docker:up`；CI 中以 mock 为主
 
 ## 前端（apps/web）
 
@@ -93,4 +84,4 @@ describe('PostsService.findAll', () => {
 ## 覆盖率
 
 - 不追求 100%；重点覆盖分支与边界（空列表、404、非法参数）
-- 查看覆盖率：`pnpm --filter api test:cov`
+- 运行测试：`pnpm --filter web test`

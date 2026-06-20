@@ -11,3 +11,6 @@ dist
 coverage
 .turbo
 .vercel
+*.tsbuildinfo
+.eslintcache
+.timing

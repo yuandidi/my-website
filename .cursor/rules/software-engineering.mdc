@@ -10,7 +10,7 @@ alwaysApply: true
 - **YAGNI / KISS**：只实现当前需求；能用简单方案解决的，不加抽象层
 - **单一职责**：一个模块/函数只做一件事；Controller 不查库、组件不拼 URL
 - **显式优于隐式**：类型、错误、边界条件写清楚，避免魔法值和隐式副作用
-- **依赖方向**：`shared` ← `api` / `web`；业务层不反向依赖 UI 或 HTTP 框架细节
+- **依赖方向**：`shared` ← `lib` / `web`；业务层不反向依赖 UI 或 HTTP 框架细节
 
 ## 代码质量
 
@@ -48,7 +48,7 @@ alwaysApply: true
 改动完成后应能通过这些门禁（相关部分）：
 
 ```bash
-pnpm --filter api lint && pnpm --filter api test
-pnpm --filter web lint && pnpm --filter web build
-pnpm build   # 全量构建（含 shared）
+pnpm check        # 日常：typecheck + lint + test
+pnpm check:full   # 发布前：build + lib typecheck + test
+pnpm build        # 全量构建（含 shared）
 ```
