@@ -40,7 +40,7 @@ alwaysApply: true
 1. **验证**：`pnpm check` 通过
 2. **拆分 commit**：按原子提交原则拆成 1～多个 commit（见上文 type/scope）
 3. **推送**：`git push origin main`（若远程默认分支为 `master`，同步 `git push origin main:master`）
-4. **确认 Vercel 部署**：在 [Vercel Dashboard](https://vercel.com) → 项目 **Deployments** 查看最新部署是否为 **Ready**；展开 **Building / Deployment Logs**，确认 build 无报错（失败时先修再推）
+4. **确认 Vercel 部署**：在 `apps/web` 用 Vercel CLI 查最新 **Production** 是否为 **Ready**，并看构建日志（失败时先修再推；详见 `vercel-deploy.mdc`）
 5. **确认本地**：`git status` 干净（除刻意忽略的本地文件）
 
 ```bash
@@ -49,7 +49,10 @@ git add <按逻辑分组的文件>
 git commit -m "feat(vercel): ..."
 git push origin main
 git push origin main:master   # 远程默认分支为 master 时
-# Vercel Dashboard → Deployments → 最新一条 → 查看日志直至 Ready
+
+cd apps/web
+pnpm dlx vercel@latest ls                              # Production 行须 ● Ready
+pnpm dlx vercel@latest inspect <deployment-url> --logs # 构建日志无报错
 ```
 
 - PR 场景：push  feature 分支后 `gh pr create`，不在此 SOP 内强推 `main`

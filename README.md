@@ -95,9 +95,14 @@ my-blog/
 1. `pnpm check` 验证通过（合并前可再跑 `pnpm check:full`）
 2. 按模块拆分 git commit（`feat` / `fix` / `docs` / `chore`）
 3. `git push` 到 `origin`（`main` 与 `master` 保持同步）
-4. [Vercel Dashboard](https://vercel.com) → **Deployments** 确认最新部署 **Ready** 且日志无报错
+4. `cd apps/web` 后用 Vercel CLI 确认最新 **Production** 为 **Ready** 且构建日志无报错：
 
-详见仓库内 `.cursor/rules/git-pr.mdc`。
+```bash
+pnpm dlx vercel@latest ls
+pnpm dlx vercel@latest inspect <deployment-url> --logs
+```
+
+详见 `.cursor/rules/git-pr.mdc`、`.cursor/rules/vercel-deploy.mdc`。
 
 ## CI / CD
 

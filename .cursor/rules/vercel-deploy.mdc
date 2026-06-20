@@ -53,11 +53,26 @@ alwaysApply: false
 pnpm db:setup
 ```
 
+## Vercel CLI（查部署与日志）
+
+项目已 link 到 `yuandidis-projects/my-blog`（`apps/web/.vercel/`）。在仓库根目录执行时加 `cd apps/web`，或使用 `pnpm deploy:vercel`（内部同样走 `vercel` CLI）。
+
+```bash
+cd apps/web
+pnpm dlx vercel@latest whoami                          # 须已登录（首次：pnpm dlx vercel@latest login）
+pnpm dlx vercel@latest ls                              # 列表首条 Production 须 ● Ready
+pnpm dlx vercel@latest inspect <deployment-url> --logs # 构建日志；末行 status ● Ready
+```
+
+- **无需 `VERCEL_TOKEN`**：本机 `vercel login` 后 CLI 使用本地凭证（`~/.vercel`）
+- **CI / 无头环境**：须在 Vercel Dashboard → Settings → Tokens 创建 Token，并设置 `VERCEL_TOKEN`
+- Dashboard 仅作备用；日常 push 后以 CLI 为准
+
 ## 部署与验证 SOP
 
 1. `pnpm check` 通过
 2. commit + push（`main` 与 `master` 同步，见 `git-pr.mdc`）
-3. **Vercel 部署确认**：Dashboard → **Deployments** → 最新部署；查看 **Building / Deployment Logs**，状态须为 **Ready**（非 Ready 则根据日志修复后重新 push）
+3. **Vercel 部署确认**（`apps/web`）：`pnpm dlx vercel@latest ls` → 最新 **Production** 为 **Ready** → `inspect <url> --logs` 确认 build 无报错（非 Ready 则根据日志修复后重新 push）
 4. 等待 CD 完成（若未在步骤 3 已确认），或手动 `pnpm deploy:vercel`
 5. **若刚关联/变更 Postgres**：确认已 Redeploy
 6. **首次部署或 schema 变更**：本地 `pnpm db:setup`（见上文）
