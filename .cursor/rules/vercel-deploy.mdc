@@ -12,7 +12,7 @@ alwaysApply: false
 
 ## 架构要点
 
-- 应用：`apps/web`（Next.js 15，`src/app` 页面路由）
+- 应用：`apps/web`（Next.js 16，`src/app` 页面路由）
 - API：单一 Route Handler `src/app/api/[[...path]]/route.ts`，分发至 `lib/api-handlers/*`
 - 业务逻辑：`lib/blog.ts`、`lib/db.ts` 等；建表/种子：`lib/setup.ts` + `scripts/`
 - 生产域名：`https://dididi.space`（及 `www.dididi.space`）
@@ -57,10 +57,11 @@ pnpm db:setup
 
 1. `pnpm check` 通过
 2. commit + push（`main` 与 `master` 同步，见 `git-pr.mdc`）
-3. 等待 Vercel CD 完成，或手动 `pnpm deploy:vercel`
-4. **若刚关联/变更 Postgres**：确认已 Redeploy
-5. **首次部署或 schema 变更**：本地 `pnpm db:setup`（见上文）
-6. 验证生产 API：
+3. **Vercel 部署确认**：Dashboard → **Deployments** → 最新部署；查看 **Building / Deployment Logs**，状态须为 **Ready**（非 Ready 则根据日志修复后重新 push）
+4. 等待 CD 完成（若未在步骤 3 已确认），或手动 `pnpm deploy:vercel`
+5. **若刚关联/变更 Postgres**：确认已 Redeploy
+6. **首次部署或 schema 变更**：本地 `pnpm db:setup`（见上文）
+7. 验证生产 API：
 
 | 端点 | 期望 |
 |------|------|
