@@ -41,7 +41,7 @@ jobs:
             eslint-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-
 
       - name: Install dependencies
-        run: pnpm exec tsx scripts/timed-phases.ts run install -- pnpm install --frozen-lockfile
+        run: pnpm dlx tsx scripts/timed-phases.ts run install -- pnpm install --frozen-lockfile
 
       - name: Typecheck, lint and test
         run: pnpm check
@@ -86,7 +86,7 @@ jobs:
             next-build-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-
 
       - name: Install dependencies
-        run: pnpm exec tsx scripts/timed-phases.ts run install -- pnpm install --frozen-lockfile
+        run: pnpm dlx tsx scripts/timed-phases.ts run install -- pnpm install --frozen-lockfile
 
       - name: Build shared and web
         run: pnpm build
