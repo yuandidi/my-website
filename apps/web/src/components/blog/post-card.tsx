@@ -50,46 +50,52 @@ function ViewCountBadge({ count, className, overlay }: ViewCountBadgeProps) {
 }
 
 export function PostCard({ post }: PostCardProps) {
+  const postHref = WEB_ROUTES.post(post.slug)
+
   return (
     <FantasyScroll className="transition-shadow hover:shadow-lg hover:shadow-primary/10">
       <div className="space-y-3">
-        {post.coverImage ? (
-          <Link
-            href={WEB_ROUTES.post(post.slug)}
-            className="group relative block overflow-hidden rounded-none border-2 border-gold/30"
-          >
-            <img
-              src={post.coverImage}
-              alt=""
-              className="aspect-[16/9] w-full object-cover transition-transform image-pixelated group-hover:scale-[1.02]"
-            />
-            <div className="absolute bottom-2 right-2">
-              <ViewCountBadge count={post.viewCount} overlay />
-            </div>
-          </Link>
-        ) : null}
+        <Link
+          href={postHref}
+          className="group block space-y-3 rounded-none outline-none focus-visible:ring-2 focus-visible:ring-primary"
+        >
+          {post.coverImage ? (
+            <span className="relative block overflow-hidden rounded-none border-2 border-gold/30">
+              <img
+                src={post.coverImage}
+                alt=""
+                className="aspect-[16/9] w-full object-cover transition-transform image-pixelated group-hover:scale-[1.02]"
+              />
+              <span className="absolute bottom-2 right-2">
+                <ViewCountBadge count={post.viewCount} overlay />
+              </span>
+            </span>
+          ) : null}
 
-        <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-          {post.publishedAt && <span>{formatDate(post.publishedAt)}</span>}
-          {!post.coverImage && <ViewCountBadge count={post.viewCount} />}
-        </div>
-        <h2 className="font-display text-xl leading-snug">
-          <Link
-            href={WEB_ROUTES.post(post.slug)}
-            className="text-foreground transition-colors hover:text-primary"
-          >
+          <span className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+            {post.publishedAt && <span>{formatDate(post.publishedAt)}</span>}
+            {!post.coverImage && <ViewCountBadge count={post.viewCount} />}
+          </span>
+
+          <span className="block font-display text-xl leading-snug text-foreground transition-colors group-hover:text-primary">
             {post.title}
-          </Link>
-        </h2>
-        {post.excerpt && (
-          <p className="text-sm leading-relaxed text-muted-foreground">
-            {post.excerpt}
-          </p>
-        )}
+          </span>
+
+          {post.excerpt ? (
+            <span className="block text-sm leading-relaxed text-muted-foreground">
+              {post.excerpt}
+            </span>
+          ) : null}
+        </Link>
+
         {post.tags.length > 0 && (
           <div className="flex flex-wrap gap-2 pt-1">
             {post.tags.map((tag) => (
-              <Link key={tag.id} href={WEB_ROUTES.tag(tag.slug)}>
+              <Link
+                key={tag.id}
+                href={WEB_ROUTES.tag(tag.slug)}
+                className="relative z-10 rounded-none outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              >
                 <Badge variant="spell">{tag.name}</Badge>
               </Link>
             ))}

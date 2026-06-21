@@ -16,6 +16,10 @@ export function SiteHeader({ className }: SiteHeaderProps) {
   const pathname = usePathname()
   const { user, isLoggedIn, login, logout, isLoading, isDeveloper } = useAuth()
   const isProfileRoute = pathname === WEB_ROUTES.profile
+  const isBlogRoute =
+    pathname === WEB_ROUTES.blog ||
+    pathname.startsWith('/posts/') ||
+    pathname.startsWith('/tags/')
 
   return (
     <header
@@ -82,7 +86,7 @@ export function SiteHeader({ className }: SiteHeaderProps) {
             href={WEB_ROUTES.blog}
             className={cn(
               'fantasy-nav-link',
-              pathname === WEB_ROUTES.blog && 'fantasy-nav-link-active',
+              isBlogRoute && 'fantasy-nav-link-active',
             )}
           >
             Blog
