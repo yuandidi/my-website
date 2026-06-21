@@ -50,14 +50,9 @@ export function ProfilePage() {
           <p className="mt-3 text-muted-foreground">{profile.title}</p>
         </div>
         {isDeveloper ? (
-          <div className="flex flex-wrap gap-2">
-            <Button asChild variant="outline" size="sm">
-              <Link href={WEB_ROUTES.postsAdmin}>管理文章</Link>
-            </Button>
-            <Button asChild variant="outline" size="sm">
-              <Link href={WEB_ROUTES.profileEdit}>编辑资料</Link>
-            </Button>
-          </div>
+          <Button asChild variant="outline" size="sm">
+            <Link href={WEB_ROUTES.admin}>管理面板</Link>
+          </Button>
         ) : !isLoggedIn ? (
           <Button variant="outline" size="sm" onClick={login}>
             GitHub 登录

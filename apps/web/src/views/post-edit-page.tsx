@@ -10,7 +10,6 @@ import { Button } from '@/components/ui/button'
 import { FantasyScroll } from '@/components/layout/fantasy-scroll'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { useAuth } from '@/hooks/useAuth'
 import { useAdminPost, usePostMutations } from '@/hooks/useAdminPosts'
 import { useTags } from '@/hooks/usePosts'
 
@@ -182,7 +181,6 @@ interface PostEditPageProps {
 }
 
 export function PostEditPage({ mode, slug }: PostEditPageProps) {
-  const { isDeveloper, isLoading: authLoading, login } = useAuth()
   const { data: post, isLoading: postLoading } = useAdminPost(slug ?? '')
   const router = useRouter()
 
@@ -192,22 +190,8 @@ export function PostEditPage({ mode, slug }: PostEditPageProps) {
     }
   }, [mode, post, postLoading, router])
 
-  if (authLoading || (mode === 'edit' && postLoading)) {
-    return null
-  }
-
-  if (!isDeveloper) {
-    return (
-      <div className="mx-auto max-w-lg space-y-4 px-4 py-16 text-center">
-        <p className="text-muted-foreground">请先使用 GitHub 登录。</p>
-        <Button onClick={login}>GitHub 登录</Button>
-        <div>
-          <Button asChild variant="outline">
-            <Link href={WEB_ROUTES.home}>返回首页</Link>
-          </Button>
-        </div>
-      </div>
-    )
+  if (mode === 'edit' && postLoading) {
+    return <p className="text-sm text-muted-foreground">加载中…</p>
   }
 
   if (mode === 'edit' && !post) {
@@ -215,13 +199,13 @@ export function PostEditPage({ mode, slug }: PostEditPageProps) {
   }
 
   return (
-    <div className="mx-auto max-w-3xl space-y-8 px-4 py-8">
+    <div className="space-y-6">
       <div>
-        <h1 className="fantasy-section-divider text-3xl font-bold text-gold">
+        <h2 className="font-display text-xl text-gold">
           {mode === 'create' ? '新建文章' : '编辑文章'}
-        </h1>
+        </h2>
         {mode === 'edit' && post && (
-          <div className="mt-3 flex items-center gap-2">
+          <div className="mt-2 flex items-center gap-2">
             <Badge variant={post.status === 'PUBLISHED' ? 'default' : 'outline'}>
               {post.status === 'PUBLISHED' ? '已发布' : '草稿'}
             </Badge>

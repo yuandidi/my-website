@@ -15,8 +15,7 @@ interface SiteHeaderProps {
 export function SiteHeader({ className }: SiteHeaderProps) {
   const pathname = usePathname()
   const { user, isLoggedIn, login, logout, isLoading, isDeveloper } = useAuth()
-  const isProfileRoute =
-    pathname === WEB_ROUTES.profile || pathname === WEB_ROUTES.profileEdit
+  const isProfileRoute = pathname === WEB_ROUTES.profile
 
   return (
     <header
@@ -60,26 +59,15 @@ export function SiteHeader({ className }: SiteHeaderProps) {
             关于
           </Link>
           {isDeveloper && (
-            <>
-              <Link
-                href={WEB_ROUTES.postsAdmin}
-                className={cn(
-                  'fantasy-nav-link',
-                  pathname.startsWith('/admin/posts') && 'fantasy-nav-link-active',
-                )}
-              >
-                文章
-              </Link>
-              <Link
-                href={WEB_ROUTES.analyticsAdmin}
-                className={cn(
-                  'fantasy-nav-link',
-                  pathname.startsWith('/admin/analytics') && 'fantasy-nav-link-active',
-                )}
-              >
-                数据
-              </Link>
-            </>
+            <Link
+              href={WEB_ROUTES.admin}
+              className={cn(
+                'fantasy-nav-link',
+                pathname.startsWith('/admin') && 'fantasy-nav-link-active',
+              )}
+            >
+              管理
+            </Link>
           )}
           <Link
             href={WEB_ROUTES.blog}

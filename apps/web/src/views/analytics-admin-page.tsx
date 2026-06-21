@@ -1,12 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
-import { WEB_ROUTES } from '@my-blog/shared'
 import { Button } from '@/components/ui/button'
 import { FantasyScroll } from '@/components/layout/fantasy-scroll'
 import { useAnalyticsSummary } from '@/hooks/useAnalytics'
-import { useAuth } from '@/hooks/useAuth'
 import { cn } from '@/lib/utils'
 
 const PERIOD_OPTIONS = [7, 30] as const
@@ -97,37 +94,16 @@ function RankList({ items, emptyText }: RankListProps) {
 }
 
 export function AnalyticsAdminPage() {
-  const { isDeveloper, isLoading: authLoading, login } = useAuth()
   const [days, setDays] = useState<(typeof PERIOD_OPTIONS)[number]>(7)
   const { data, isLoading, isError, error, refetch } = useAnalyticsSummary(days)
 
-  if (authLoading) {
-    return null
-  }
-
-  if (!isDeveloper) {
-    return (
-      <div className="mx-auto max-w-lg space-y-4 px-4 py-16 text-center">
-        <p className="text-muted-foreground">请先使用 GitHub 登录。</p>
-        <Button onClick={login}>GitHub 登录</Button>
-        <div>
-          <Button asChild variant="outline">
-            <Link href={WEB_ROUTES.home}>返回首页</Link>
-          </Button>
-        </div>
-      </div>
-    )
-  }
-
   return (
-    <div className="mx-auto max-w-5xl space-y-8 px-4 py-8">
+    <div className="space-y-8">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="fantasy-section-divider text-3xl font-bold text-gold">
-            访问数据
-          </h1>
-          <p className="mt-3 text-sm text-muted-foreground">
-            仅统计公开页面访问与交互，不含管理端。
+          <h2 className="font-display text-xl text-gold">访问数据</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            仅统计公开页面访问与交互
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -142,9 +118,6 @@ export function AnalyticsAdminPage() {
               近 {option} 天
             </Button>
           ))}
-          <Button asChild variant="outline" size="sm">
-            <Link href={WEB_ROUTES.postsAdmin}>文章管理</Link>
-          </Button>
         </div>
       </div>
 
@@ -173,7 +146,7 @@ export function AnalyticsAdminPage() {
 
           <div className="grid gap-6 lg:grid-cols-2">
             <FantasyScroll innerClassName="space-y-4">
-              <h2 className="font-display text-lg text-gold">每日趋势</h2>
+              <h3 className="font-display text-lg text-gold">每日趋势</h3>
               <BarChart
                 items={data.daily.map((item) => ({
                   label: formatDateLabel(item.date),
@@ -183,7 +156,7 @@ export function AnalyticsAdminPage() {
             </FantasyScroll>
 
             <FantasyScroll innerClassName="space-y-4">
-              <h2 className="font-display text-lg text-gold">热门页面</h2>
+              <h3 className="font-display text-lg text-gold">热门页面</h3>
               <RankList
                 emptyText="暂无页面浏览记录"
                 items={data.topPages.map((item) => ({
@@ -195,7 +168,7 @@ export function AnalyticsAdminPage() {
             </FantasyScroll>
 
             <FantasyScroll innerClassName="space-y-4">
-              <h2 className="font-display text-lg text-gold">热门文章</h2>
+              <h3 className="font-display text-lg text-gold">热门文章</h3>
               <RankList
                 emptyText="暂无文章阅读记录"
                 items={data.topPosts.map((item) => ({
@@ -207,7 +180,7 @@ export function AnalyticsAdminPage() {
             </FantasyScroll>
 
             <FantasyScroll innerClassName="space-y-4">
-              <h2 className="font-display text-lg text-gold">标签筛选</h2>
+              <h3 className="font-display text-lg text-gold">标签筛选</h3>
               <RankList
                 emptyText="暂无标签筛选记录"
                 items={data.topTagFilters.map((item) => ({
@@ -221,7 +194,7 @@ export function AnalyticsAdminPage() {
             <FantasyScroll
               innerClassName={cn('space-y-4', data.topExternalLinks.length === 0 && 'lg:col-span-2')}
             >
-              <h2 className="font-display text-lg text-gold">外链点击</h2>
+              <h3 className="font-display text-lg text-gold">外链点击</h3>
               <RankList
                 emptyText="暂无外链点击记录"
                 items={data.topExternalLinks.map((item) => ({

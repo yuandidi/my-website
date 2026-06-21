@@ -10,7 +10,6 @@ import { Button } from '@/components/ui/button'
 import { FantasyScroll } from '@/components/layout/fantasy-scroll'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { useAuth } from '@/hooks/useAuth'
 import { useSiteProfile } from '@/hooks/useSiteProfile'
 import { api } from '@/lib/api'
 
@@ -157,7 +156,7 @@ function ProfileEditForm({ profile }: ProfileEditFormProps) {
           {mutation.isPending ? '保存中…' : '保存'}
         </Button>
         <Button asChild variant="outline">
-          <Link href={WEB_ROUTES.profile}>取消</Link>
+          <Link href={WEB_ROUTES.profile}>查看关于页</Link>
         </Button>
       </div>
     </FantasyScroll>
@@ -165,7 +164,6 @@ function ProfileEditForm({ profile }: ProfileEditFormProps) {
 }
 
 export function ProfileEditPage() {
-  const { isDeveloper, isLoading: authLoading, login } = useAuth()
   const { data: profile, isLoading: profileLoading } = useSiteProfile()
   const router = useRouter()
 
@@ -175,22 +173,8 @@ export function ProfileEditPage() {
     }
   }, [profile, profileLoading, router])
 
-  if (authLoading || profileLoading) {
-    return null
-  }
-
-  if (!isDeveloper) {
-    return (
-      <div className="mx-auto max-w-lg space-y-4 px-4 py-16 text-center">
-        <p className="text-muted-foreground">请先使用 GitHub 登录。</p>
-        <Button onClick={login}>GitHub 登录</Button>
-        <div>
-          <Button asChild variant="outline">
-            <Link href={WEB_ROUTES.profile}>返回关于页</Link>
-          </Button>
-        </div>
-      </div>
-    )
+  if (profileLoading) {
+    return <p className="text-sm text-muted-foreground">加载中…</p>
   }
 
   if (!profile) {
@@ -198,13 +182,11 @@ export function ProfileEditPage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl space-y-8 px-4 py-8">
+    <div className="space-y-6">
       <div>
-        <h1 className="fantasy-section-divider text-3xl font-bold text-gold">
-          编辑资料
-        </h1>
-        <p className="mt-3 text-sm text-muted-foreground">
-          修改后将立即展示在关于页。
+        <h2 className="font-display text-xl text-gold">资料</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          修改后将立即展示在关于页
         </p>
       </div>
 

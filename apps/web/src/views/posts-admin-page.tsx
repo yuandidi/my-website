@@ -7,7 +7,6 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { FantasyScroll } from '@/components/layout/fantasy-scroll'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/hooks/useAuth'
 import {
   useAdminPosts,
   usePostMutations,
@@ -16,7 +15,6 @@ import {
 import { useTags } from '@/hooks/usePosts'
 
 export function PostsAdminPage() {
-  const { isDeveloper, isLoading: authLoading, login } = useAuth()
   const { data: posts, isLoading: postsLoading } = useAdminPosts({ page: 1, limit: 50 })
   const { data: tags } = useTags()
   const { deletePost } = usePostMutations()
@@ -25,22 +23,8 @@ export function PostsAdminPage() {
   const [tagName, setTagName] = useState('')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
-  if (authLoading || postsLoading) {
-    return null
-  }
-
-  if (!isDeveloper) {
-    return (
-      <div className="mx-auto max-w-lg space-y-4 px-4 py-16 text-center">
-        <p className="text-muted-foreground">请先使用 GitHub 登录。</p>
-        <Button onClick={login}>GitHub 登录</Button>
-        <div>
-          <Button asChild variant="outline">
-            <Link href={WEB_ROUTES.home}>返回首页</Link>
-          </Button>
-        </div>
-      </div>
-    )
+  if (postsLoading) {
+    return <p className="text-sm text-muted-foreground">加载中…</p>
   }
 
   function handleCreateTag() {
@@ -59,15 +43,11 @@ export function PostsAdminPage() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl space-y-8 px-4 py-8">
+    <div className="space-y-8">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="fantasy-section-divider text-3xl font-bold text-gold">
-            文章管理
-          </h1>
-          <p className="mt-3 text-sm text-muted-foreground">
-            管理文章与标签。仅开发者可见。
-          </p>
+          <h2 className="font-display text-xl text-gold">文章</h2>
+          <p className="mt-1 text-sm text-muted-foreground">管理文章与标签</p>
         </div>
         <Button asChild>
           <Link href={WEB_ROUTES.postNew}>新建文章</Link>
@@ -120,7 +100,7 @@ export function PostsAdminPage() {
       </FantasyScroll>
 
       <FantasyScroll innerClassName="space-y-4">
-        <h2 className="text-lg font-semibold text-gold">标签</h2>
+        <h3 className="text-lg font-semibold text-gold">标签</h3>
         <div className="flex gap-2">
           <Input
             placeholder="新标签名称"

@@ -144,13 +144,16 @@ export const WEB_ROUTES = {
   home: '/',
   blog: '/blog',
   profile: '/profile',
-  profileEdit: '/profile/edit',
+  admin: '/admin',
   postsAdmin: '/admin/posts',
   postNew: '/admin/posts/new',
   postEdit: (slug: string) => `/admin/posts/${slug}/edit`,
   post: (slug: string) => `/posts/${slug}`,
   tag: (slug: string) => `/tags/${slug}`,
   analyticsAdmin: '/admin/analytics',
+  adminProfile: '/admin/profile',
+  /** @deprecated 使用 adminProfile */
+  profileEdit: '/admin/profile',
 } as const;
 
 export {
