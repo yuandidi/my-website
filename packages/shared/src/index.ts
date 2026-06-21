@@ -143,6 +143,7 @@ export const API_ROUTES = {
 export const WEB_ROUTES = {
   home: '/',
   blog: '/blog',
+  feed: '/feed.xml',
   profile: '/profile',
   admin: '/admin',
   postsAdmin: '/admin/posts',

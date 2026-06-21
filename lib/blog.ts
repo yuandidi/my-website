@@ -192,6 +192,68 @@ export async function listTagPosts(slug: string, page: number, limit: number) {
   });
 }
 
+export interface FeedPost {
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  content: string;
+  coverImage: string | null;
+  publishedAt: string;
+}
+
+export interface PostSitemapEntry {
+  slug: string;
+  updatedAt: string;
+}
+
+export async function listPublishedPostsForFeed(options?: {
+  limit?: number;
+}): Promise<FeedPost[]> {
+  const limit = Math.min(options?.limit ?? 50, 100);
+
+  const rows = await query<Record<string, unknown>>(
+    `
+    SELECT
+      p.title,
+      p.slug,
+      p.excerpt,
+      p.content,
+      p."coverImage",
+      p."publishedAt"
+    FROM "Post" p
+    WHERE ${publishedClause}
+    ORDER BY p."publishedAt" DESC
+    LIMIT $1
+    `,
+    [limit],
+  );
+
+  return rows.map((row) => ({
+    title: String(row.title),
+    slug: String(row.slug),
+    excerpt: row.excerpt ? String(row.excerpt) : null,
+    content: String(row.content),
+    coverImage: row.coverImage ? String(row.coverImage) : null,
+    publishedAt: new Date(String(row.publishedAt)).toISOString(),
+  }));
+}
+
+export async function listPublishedPostSlugs(): Promise<PostSitemapEntry[]> {
+  const rows = await query<{ slug: string; updatedAt: Date }>(
+    `
+    SELECT p.slug, p."updatedAt"
+    FROM "Post" p
+    WHERE ${publishedClause}
+    ORDER BY p."publishedAt" DESC
+    `,
+  );
+
+  return rows.map((row) => ({
+    slug: row.slug,
+    updatedAt: new Date(row.updatedAt).toISOString(),
+  }));
+}
+
 export async function checkHealth() {
   await query('SELECT 1');
   return { status: 'ok', services: { database: 'ok' } };
