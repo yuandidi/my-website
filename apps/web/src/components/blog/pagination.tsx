@@ -4,9 +4,15 @@ interface PaginationProps {
   page: number
   totalPages: number
   onPageChange: (page: number) => void
+  disabled?: boolean
 }
 
-export function Pagination({ page, totalPages, onPageChange }: PaginationProps) {
+export function Pagination({
+  page,
+  totalPages,
+  onPageChange,
+  disabled = false,
+}: PaginationProps) {
   if (totalPages <= 1) return null
 
   return (
@@ -14,7 +20,7 @@ export function Pagination({ page, totalPages, onPageChange }: PaginationProps) 
       <Button
         variant="outline"
         size="sm"
-        disabled={page <= 1}
+        disabled={disabled || page <= 1}
         onClick={() => onPageChange(page - 1)}
       >
         上一页
@@ -25,7 +31,7 @@ export function Pagination({ page, totalPages, onPageChange }: PaginationProps) 
       <Button
         variant="outline"
         size="sm"
-        disabled={page >= totalPages}
+        disabled={disabled || page >= totalPages}
         onClick={() => onPageChange(page + 1)}
       >
         下一页

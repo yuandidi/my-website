@@ -11,12 +11,20 @@ import { PostTagFilter } from '@/components/blog/post-tag-filter'
 import { Pagination } from '@/components/blog/pagination'
 import { usePosts, useTags } from '@/hooks/usePosts'
 import { track } from '@/lib/analytics'
+import { cn } from '@/lib/utils'
 
 export function BlogPage() {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const selectedTag = searchParams.get('tag')
+  const urlTag = searchParams.get('tag')
+  const [pendingTag, setPendingTag] = useState<string | null | undefined>(undefined)
+  const selectedTag = pendingTag !== undefined ? pendingTag : urlTag
+
+  if (pendingTag !== undefined && pendingTag === urlTag) {
+    setPendingTag(undefined)
+  }
+
   const pageKey = selectedTag ?? '__all__'
   const [pageByTag, setPageByTag] = useState<Record<string, number>>({})
   const page = pageByTag[pageKey] ?? 1
@@ -26,15 +34,26 @@ export function BlogPage() {
   }
 
   const { data: tags } = useTags()
-  const { data, isLoading, isError, error, refetch } = usePosts({
+  const {
+    data,
+    isLoading,
+    isFetching,
+    isPlaceholderData,
+    isError,
+    error,
+    refetch,
+  } = usePosts({
     page,
     limit: 6,
     tag: selectedTag ?? undefined,
   })
 
   const activeTagName = tags?.find((tag) => tag.slug === selectedTag)?.name
+  const isRefreshing = isFetching && isPlaceholderData
 
   function handleTagSelect(slug: string | null) {
+    setPendingTag(slug)
+
     if (slug) {
       track('tag_filter', { slug })
     }
@@ -66,7 +85,7 @@ export function BlogPage() {
         )}
       </div>
 
-      {isLoading && <PostListSkeleton />}
+      {isLoading && !data && <PostListSkeleton />}
       {isError && (
         <QueryError
           message={error instanceof Error ? error.message : undefined}
@@ -75,7 +94,13 @@ export function BlogPage() {
       )}
       {data && (
         <>
-          <div className="space-y-4">
+          <div
+            aria-busy={isRefreshing}
+            className={cn(
+              'space-y-4 transition-opacity duration-200',
+              isRefreshing && 'pointer-events-none opacity-60',
+            )}
+          >
             {data.data.length === 0 ? (
               <p className="text-muted-foreground">暂无文章</p>
             ) : (
@@ -86,6 +111,7 @@ export function BlogPage() {
             page={data.meta.page}
             totalPages={data.meta.totalPages}
             onPageChange={setPage}
+            disabled={isRefreshing}
           />
         </>
       )}

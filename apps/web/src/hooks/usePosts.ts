@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import type { PostsQueryParams, PostsSearchParams } from '@my-blog/shared'
 import { api } from '@/lib/api'
 
@@ -7,6 +7,7 @@ export function usePosts(params?: PostsQueryParams) {
     queryKey: ['posts', params],
     queryFn: () => api.getPosts(params),
     staleTime: 5 * 60 * 1000,
+    placeholderData: keepPreviousData,
   })
 }
 
