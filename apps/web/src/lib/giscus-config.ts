@@ -3,7 +3,6 @@ export interface GiscusConfig {
   repoId: string
   category: string
   categoryId: string
-  theme: string
 }
 
 export function getGiscusConfig(): GiscusConfig | null {
@@ -12,9 +11,6 @@ export function getGiscusConfig(): GiscusConfig | null {
   const category =
     process.env.NEXT_PUBLIC_GISCUS_CATEGORY?.trim() ?? 'General'
   const categoryId = process.env.NEXT_PUBLIC_GISCUS_CATEGORY_ID?.trim()
-  const theme =
-    process.env.NEXT_PUBLIC_GISCUS_THEME?.trim() ??
-    'preferred_color_scheme'
 
   if (!repo || !repoId || !categoryId) {
     return null
@@ -25,7 +21,6 @@ export function getGiscusConfig(): GiscusConfig | null {
     repoId,
     category,
     categoryId,
-    theme,
   }
 }
 

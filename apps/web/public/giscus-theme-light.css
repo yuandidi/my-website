@@ -1,0 +1,106 @@
+/*!
+ * Fantasy blog · light (羊皮卷)
+ * Based on GitHub Primer light tokens (MIT) via giscus
+ */
+:host,
+html {
+  --font-family-sans: "Noto Sans SC", system-ui, sans-serif;
+  --font-family-default: var(--font-family-sans);
+}
+
+main {
+  --color-prettylights-syntax-comment: #6b5e50;
+  --color-prettylights-syntax-constant: #5a3d8a;
+  --color-prettylights-syntax-entity: #7b3fa0;
+  --color-prettylights-syntax-storage-modifier-import: #3d3228;
+  --color-prettylights-syntax-entity-tag: #4a7a3a;
+  --color-prettylights-syntax-keyword: #9a3d6a;
+  --color-prettylights-syntax-string: #5a4a30;
+  --color-prettylights-syntax-variable: #9a7830;
+  --color-prettylights-syntax-brackethighlighter-unmatched: #a03030;
+  --color-prettylights-syntax-invalid-illegal-text: #f7f4eb;
+  --color-prettylights-syntax-invalid-illegal-bg: #a03030;
+  --color-prettylights-syntax-carriage-return-text: #f7f4eb;
+  --color-prettylights-syntax-carriage-return-bg: #9a3d6a;
+  --color-prettylights-syntax-string-regexp: #4a7a3a;
+  --color-prettylights-syntax-markup-list: #6b5e50;
+  --color-prettylights-syntax-markup-heading: #7b3fa0;
+  --color-prettylights-syntax-markup-italic: #3d3228;
+  --color-prettylights-syntax-markup-bold: #3d3228;
+  --color-prettylights-syntax-markup-deleted-text: #a03030;
+  --color-prettylights-syntax-markup-deleted-bg: #f5e0dc;
+  --color-prettylights-syntax-markup-inserted-text: #4a7a3a;
+  --color-prettylights-syntax-markup-inserted-bg: #e4f0dc;
+  --color-prettylights-syntax-markup-changed-text: #9a7830;
+  --color-prettylights-syntax-markup-changed-bg: #f5ead0;
+  --color-prettylights-syntax-markup-ignored-text: #6b5e50;
+  --color-prettylights-syntax-markup-ignored-bg: #7b3fa0;
+  --color-prettylights-syntax-meta-diff-range: #7b3fa0;
+  --color-prettylights-syntax-brackethighlighter-angle: #6b5e50;
+  --color-prettylights-syntax-sublimelinter-gutter-mark: #b8956a;
+  --color-prettylights-syntax-constant-other-reference-link: #9a7830;
+  --color-btn-text: #3d3228;
+  --color-btn-bg: #ebe4d4;
+  --color-btn-border: #b8956a66;
+  --color-btn-shadow: 2px 2px 0 0 #b8956a59;
+  --color-btn-inset-shadow: inset 0 1px 0 #ffffff40;
+  --color-btn-hover-bg: #e3dac6;
+  --color-btn-hover-border: #b8956a;
+  --color-btn-active-bg: #ddd3bc;
+  --color-btn-active-border: #9a7830;
+  --color-btn-selected-bg: #e8dfc8;
+  --color-btn-primary-text: #f7f4eb;
+  --color-btn-primary-bg: #7b3fa0;
+  --color-btn-primary-border: #5a2d7899;
+  --color-btn-primary-shadow: 2px 2px 0 0 #5a2d7859;
+  --color-btn-primary-inset-shadow: inset 0 1px 0 #ffffff14;
+  --color-btn-primary-hover-bg: #693589;
+  --color-btn-primary-hover-border: #5a2d78;
+  --color-btn-primary-selected-bg: #5a2d78;
+  --color-btn-primary-selected-shadow: inset 0 1px 0 #0000001a;
+  --color-btn-primary-disabled-text: #f7f4ebcc;
+  --color-btn-primary-disabled-bg: #7b3fa099;
+  --color-btn-primary-disabled-border: #b8956a66;
+  --color-action-list-item-default-hover-bg: #b8956a26;
+  --color-segmented-control-bg: #e8dfc8;
+  --color-segmented-control-button-bg: #f7f4eb;
+  --color-segmented-control-button-selected-border: #b8956a;
+  --color-fg-default: #3d3228;
+  --color-fg-muted: #6b5e50;
+  --color-fg-subtle: #8a7a68;
+  --color-canvas-default: #f7f4eb;
+  --color-canvas-overlay: #f7f4eb;
+  --color-canvas-inset: #ebe4d4;
+  --color-canvas-subtle: #f0ebe0;
+  --color-border-default: #b8956a;
+  --color-border-muted: #c9b896;
+  --color-neutral-muted: #b8956a33;
+  --color-accent-fg: #9a7830;
+  --color-accent-emphasis: #7b3fa0;
+  --color-accent-muted: #7b3fa066;
+  --color-accent-subtle: #7b3fa01a;
+  --color-success-fg: #4a7a3a;
+  --color-attention-fg: #9a7830;
+  --color-attention-muted: #9a783066;
+  --color-attention-subtle: #f5ead0;
+  --color-danger-fg: #a03030;
+  --color-danger-muted: #a0303066;
+  --color-danger-subtle: #f5e0dc;
+  --color-primer-shadow-inset: inset 0 1px 0 #b8956a33;
+  --color-scale-gray-1: #ebe4d4;
+  --color-scale-blue-1: #7b3fa026;
+  --color-social-reaction-bg-hover: var(--color-scale-gray-1);
+  --color-social-reaction-bg-reacted-hover: var(--color-scale-blue-1);
+}
+
+.gsc-homepage-bg {
+  background-color: transparent !important;
+}
+
+main .pagination-loader-container {
+  background-image: url(https://github.com/images/modules/pulls/progressive-disclosure-line.svg);
+}
+
+main .gsc-loading-image {
+  background-image: url(https://github.githubassets.com/images/mona-loading-default.gif);
+}

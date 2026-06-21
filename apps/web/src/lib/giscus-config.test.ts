@@ -6,7 +6,6 @@ const ENV_KEYS = [
   'NEXT_PUBLIC_GISCUS_REPO_ID',
   'NEXT_PUBLIC_GISCUS_CATEGORY',
   'NEXT_PUBLIC_GISCUS_CATEGORY_ID',
-  'NEXT_PUBLIC_GISCUS_THEME',
 ] as const
 
 function clearGiscusEnv() {
@@ -35,21 +34,18 @@ describe('getGiscusConfig', () => {
       repoId: 'R_kgDOExample',
       category: 'General',
       categoryId: 'DIC_kwDOExample',
-      theme: 'preferred_color_scheme',
     })
     expect(isGiscusEnabled()).toBe(true)
   })
 
-  it('uses custom category and theme when provided', () => {
+  it('uses custom category when provided', () => {
     process.env.NEXT_PUBLIC_GISCUS_REPO = 'yuandidi/my-blog-comments'
     process.env.NEXT_PUBLIC_GISCUS_REPO_ID = 'R_kgDOExample'
     process.env.NEXT_PUBLIC_GISCUS_CATEGORY = 'Blog Comments'
     process.env.NEXT_PUBLIC_GISCUS_CATEGORY_ID = 'DIC_kwDOExample'
-    process.env.NEXT_PUBLIC_GISCUS_THEME = 'transparent_dark'
 
     expect(getGiscusConfig()).toMatchObject({
       category: 'Blog Comments',
-      theme: 'transparent_dark',
     })
   })
 })

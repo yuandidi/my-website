@@ -1,0 +1,106 @@
+/*!
+ * Fantasy blog · dark (魔法夜)
+ * Based on GitHub Primer dark dimmed tokens (MIT) via giscus
+ */
+:host,
+html {
+  --font-family-sans: "Noto Sans SC", system-ui, sans-serif;
+  --font-family-default: var(--font-family-sans);
+}
+
+main {
+  --color-prettylights-syntax-comment: #a89fb8;
+  --color-prettylights-syntax-constant: #b07fe0;
+  --color-prettylights-syntax-entity: #d4b84a;
+  --color-prettylights-syntax-storage-modifier-import: #ede8dc;
+  --color-prettylights-syntax-entity-tag: #7bc47b;
+  --color-prettylights-syntax-keyword: #e08080;
+  --color-prettylights-syntax-string: #96d0ff;
+  --color-prettylights-syntax-variable: #d4b84a;
+  --color-prettylights-syntax-brackethighlighter-unmatched: #e5534b;
+  --color-prettylights-syntax-invalid-illegal-text: #ede8dc;
+  --color-prettylights-syntax-invalid-illegal-bg: #922323;
+  --color-prettylights-syntax-carriage-return-text: #ede8dc;
+  --color-prettylights-syntax-carriage-return-bg: #ad2e2c;
+  --color-prettylights-syntax-string-regexp: #7bc47b;
+  --color-prettylights-syntax-markup-list: #d4b84a;
+  --color-prettylights-syntax-markup-heading: #b07fe0;
+  --color-prettylights-syntax-markup-italic: #ede8dc;
+  --color-prettylights-syntax-markup-bold: #ede8dc;
+  --color-prettylights-syntax-markup-deleted-text: #ffd8d3;
+  --color-prettylights-syntax-markup-deleted-bg: #78191b;
+  --color-prettylights-syntax-markup-inserted-text: #b4f1b4;
+  --color-prettylights-syntax-markup-inserted-bg: #1b4721;
+  --color-prettylights-syntax-markup-changed-text: #ffddb0;
+  --color-prettylights-syntax-markup-changed-bg: #682d0f;
+  --color-prettylights-syntax-markup-ignored-text: #a89fb8;
+  --color-prettylights-syntax-markup-ignored-bg: #7b3fa0;
+  --color-prettylights-syntax-meta-diff-range: #d4b84a;
+  --color-prettylights-syntax-brackethighlighter-angle: #a89fb8;
+  --color-prettylights-syntax-sublimelinter-gutter-mark: #5c4870;
+  --color-prettylights-syntax-constant-other-reference-link: #96d0ff;
+  --color-btn-text: #ede8dc;
+  --color-btn-bg: #2a2438;
+  --color-btn-border: #5c487066;
+  --color-btn-shadow: 2px 2px 0 0 #d4b84a40;
+  --color-btn-inset-shadow: 0 0 #0000;
+  --color-btn-hover-bg: #342d45;
+  --color-btn-hover-border: #d4b84a80;
+  --color-btn-active-bg: #3d3550;
+  --color-btn-active-border: #9b59d0;
+  --color-btn-selected-bg: #221e2e;
+  --color-btn-primary-text: #1a1524;
+  --color-btn-primary-bg: #b07fe0;
+  --color-btn-primary-border: #9b59d080;
+  --color-btn-primary-shadow: 2px 2px 0 0 #d4b84a40;
+  --color-btn-primary-inset-shadow: 0 0 #0000;
+  --color-btn-primary-hover-bg: #c094e8;
+  --color-btn-primary-hover-border: #d4b84a80;
+  --color-btn-primary-selected-bg: #9b59d0;
+  --color-btn-primary-selected-shadow: 0 0 #0000;
+  --color-btn-primary-disabled-text: #ede8dc80;
+  --color-btn-primary-disabled-bg: #9b59d099;
+  --color-btn-primary-disabled-border: #5c487066;
+  --color-action-list-item-default-hover-bg: #d4b84a1a;
+  --color-segmented-control-bg: #342d4566;
+  --color-segmented-control-button-bg: #221e2e;
+  --color-segmented-control-button-selected-border: #d4b84a;
+  --color-fg-default: #ede8dc;
+  --color-fg-muted: #a89fb8;
+  --color-fg-subtle: #7a708a;
+  --color-canvas-default: #221e2e;
+  --color-canvas-overlay: #221e2e;
+  --color-canvas-inset: #1a1524;
+  --color-canvas-subtle: #2a2438;
+  --color-border-default: #5c4870;
+  --color-border-muted: #4a3d5c;
+  --color-neutral-muted: #9b59d033;
+  --color-accent-fg: #d4b84a;
+  --color-accent-emphasis: #b07fe0;
+  --color-accent-muted: #9b59d066;
+  --color-accent-subtle: #9b59d01a;
+  --color-success-fg: #7bc47b;
+  --color-attention-fg: #d4b84a;
+  --color-attention-muted: #d4b84a66;
+  --color-attention-subtle: #d4b84a26;
+  --color-danger-fg: #e5534b;
+  --color-danger-muted: #e5534b66;
+  --color-danger-subtle: #e5534b1a;
+  --color-primer-shadow-inset: 0 0 #0000;
+  --color-scale-gray-7: #342d45;
+  --color-scale-blue-8: #5a2d78;
+  --color-social-reaction-bg-hover: var(--color-scale-gray-7);
+  --color-social-reaction-bg-reacted-hover: var(--color-scale-blue-8);
+}
+
+.gsc-homepage-bg {
+  background-color: transparent !important;
+}
+
+main .pagination-loader-container {
+  background-image: url(https://github.com/images/modules/pulls/progressive-disclosure-line-dark.svg);
+}
+
+main .gsc-loading-image {
+  background-image: url(https://github.githubassets.com/images/mona-loading-dimmed.gif);
+}
