@@ -47,10 +47,10 @@ export function AdminShell({ children }: { children: ReactNode }) {
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    'shrink-0 rounded-none border-2 px-3 py-2 text-sm font-medium transition-colors',
+                    'shrink-0 rounded-none px-3 py-2 text-sm font-medium transition-[color,transform,box-shadow,border-color]',
                     active
                       ? 'border-gold/50 bg-primary/15 text-gold'
-                      : 'border-transparent text-muted-foreground hover:border-gold/30 hover:text-foreground',
+                      : 'border-2 border-transparent text-muted-foreground hover:text-foreground',
                   )}
                 >
                   {item.label}

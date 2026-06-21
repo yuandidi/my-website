@@ -53,18 +53,18 @@ export function PostCard({ post }: PostCardProps) {
   const postHref = WEB_ROUTES.post(post.slug)
 
   return (
-    <FantasyScroll className="transition-shadow hover:shadow-lg hover:shadow-primary/10">
+    <FantasyScroll className="fantasy-panel-hover">
       <div className="space-y-3">
         <Link
           href={postHref}
-          className="group block space-y-3 rounded-none outline-none focus-visible:ring-2 focus-visible:ring-primary"
+          className="group block space-y-3 rounded-none fantasy-focus"
         >
           {post.coverImage ? (
             <span className="relative block overflow-hidden rounded-none border-2 border-gold/30">
               <img
                 src={post.coverImage}
                 alt=""
-                className="aspect-[16/9] w-full object-cover transition-transform image-pixelated group-hover:scale-[1.02]"
+                className="aspect-[16/9] w-full object-cover transition-transform group-hover:scale-[1.02]"
               />
               <span className="absolute bottom-2 right-2">
                 <ViewCountBadge count={post.viewCount} overlay />
@@ -94,7 +94,7 @@ export function PostCard({ post }: PostCardProps) {
               <Link
                 key={tag.id}
                 href={WEB_ROUTES.tag(tag.slug)}
-                className="relative z-10 rounded-none outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                className="relative z-10 rounded-none fantasy-focus"
               >
                 <Badge variant="spell">{tag.name}</Badge>
               </Link>

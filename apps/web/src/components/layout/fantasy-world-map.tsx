@@ -27,14 +27,14 @@ function WorldMapHotspot({ spot }: WorldMapHotspotProps) {
           label: spot.label,
         })
       }
-      className="absolute z-10 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-primary"
+      className="absolute z-10 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1 rounded-sm fantasy-focus"
       style={{ left: `${spot.x}%`, top: `${spot.y}%` }}
       aria-label={`${spot.label}，进入关于页`}
     >
       <span className="flex size-8 items-center justify-center rounded-none border-2 border-gold bg-primary font-pixel text-primary-foreground transition-colors fantasy-pixel-shadow-sm hover:bg-primary/90">
         <Home className="size-4" aria-hidden />
       </span>
-      <span className="rounded-none border-2 border-gold/30 bg-card/95 px-2 py-0.5 font-pixel text-xs text-foreground fantasy-pixel-shadow-sm">
+      <span className="rounded-none border border-gold/30 bg-card/95 px-2 py-0.5 font-pixel text-xs text-foreground fantasy-pixel-shadow-sm">
         {spot.label}
       </span>
     </Link>

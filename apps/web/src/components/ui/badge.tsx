@@ -9,12 +9,12 @@ const badgeVariants = cva(
       variant: {
         default: 'border-transparent bg-primary text-primary-foreground',
         secondary:
-          'border border-gold/40 bg-gold/15 text-gold-foreground hover:bg-gold/25',
-        outline: 'text-foreground',
+          'border-gold/40 bg-gold/15 text-gold-foreground hover:bg-gold/25',
+        outline: 'border-gold/30 text-foreground',
         guild:
-          'border border-gold/50 bg-gold/20 text-gold-foreground hover:bg-gold/30',
+          'border-gold/50 bg-gold/20 text-gold-foreground hover:bg-gold/30',
         spell:
-          'border border-primary/50 bg-primary/10 text-primary hover:bg-primary/20',
+          'border-primary/50 bg-primary/10 text-primary hover:bg-primary/20',
       },
     },
     defaultVariants: {

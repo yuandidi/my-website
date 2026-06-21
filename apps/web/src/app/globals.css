@@ -5,6 +5,7 @@
   --font-display: "ZCOOL KuaiLe", "Noto Sans SC", sans-serif;
   --font-body: "Noto Sans SC", system-ui, sans-serif;
   --font-pixel: "ZCOOL KuaiLe", "Noto Sans SC", sans-serif;
+  --font-mono: ui-monospace, "Cascadia Code", "Source Han Sans SC", monospace;
 
   /* 羊皮卷 · light */
   --color-background: oklch(94% 0.04 85);
@@ -16,6 +17,9 @@
   --color-primary-foreground: oklch(98% 0.01 90);
   --color-card: oklch(97% 0.03 88);
   --color-card-foreground: oklch(32% 0.06 48);
+  --color-panel: oklch(96% 0.038 86);
+  --color-panel-highlight: oklch(98% 0.028 88);
+  --color-panel-shadow: oklch(92% 0.042 84);
   --color-accent: oklch(90% 0.07 85);
   --color-accent-foreground: oklch(38% 0.08 300);
   --color-gold: oklch(62% 0.14 72);
@@ -39,6 +43,9 @@
     --color-primary-foreground: oklch(17% 0.05 285);
     --color-card: oklch(21% 0.05 288);
     --color-card-foreground: oklch(93% 0.03 88);
+    --color-panel: oklch(19% 0.048 287);
+    --color-panel-highlight: oklch(23% 0.055 290);
+    --color-panel-shadow: oklch(16% 0.042 285);
     --color-accent: oklch(27% 0.07 300);
     --color-accent-foreground: oklch(88% 0.05 88);
     --color-gold: oklch(78% 0.14 82);
@@ -84,6 +91,14 @@
 }
 
 @layer utilities {
+  /*
+   * 魔法主题设计语言
+   * · 紫 primary — 魔法、链接、主按钮
+   * · 金 gold — 边框、标题、导航强调
+   * · 面板 — 羊皮卷 / 魔法夜 + 轻微 primary 光晕
+   * · 阴影 — 金色硬偏移（大）/ 紫色硬偏移（小）
+   */
+
   .fantasy-bg {
     position: relative;
     isolation: isolate;
@@ -154,14 +169,31 @@
     image-rendering: crisp-edges;
   }
 
+  .fantasy-panel-hover {
+    transition:
+      transform 150ms ease-out,
+      box-shadow 150ms ease-out;
+  }
+
+  .fantasy-panel-hover:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: var(--shadow-pixel);
+  }
+
+  .fantasy-focus {
+    @apply outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+  }
+
   .fantasy-pixel-panel {
     border-radius: 0;
     border: 2px solid oklch(from var(--color-gold) l c h / 0.55);
     box-shadow: var(--shadow-pixel);
+    background-color: var(--color-panel);
     background-image: linear-gradient(
       180deg,
-      oklch(from var(--color-card) l c h / 1) 0%,
-      oklch(from var(--color-primary) l c h / 0.04) 100%
+      var(--color-panel-highlight) 0%,
+      var(--color-panel) 55%,
+      oklch(from var(--color-primary) l c h / 0.05) 100%
     );
   }
 
@@ -179,46 +211,6 @@
     background-repeat: repeat;
     background-size: 128px 128px;
     mix-blend-mode: overlay;
-  }
-
-  .fantasy-pixel-corner {
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    background-color: var(--color-gold);
-    image-rendering: pixelated;
-  }
-
-  .fantasy-pixel-corner-tl {
-    top: -2px;
-    left: -2px;
-    box-shadow:
-      10px 0 0 0 oklch(from var(--color-gold) l c h / 0.45),
-      0 10px 0 0 oklch(from var(--color-gold) l c h / 0.45);
-  }
-
-  .fantasy-pixel-corner-tr {
-    top: -2px;
-    right: -2px;
-    box-shadow:
-      -10px 0 0 0 oklch(from var(--color-gold) l c h / 0.45),
-      0 10px 0 0 oklch(from var(--color-gold) l c h / 0.45);
-  }
-
-  .fantasy-pixel-corner-bl {
-    bottom: -2px;
-    left: -2px;
-    box-shadow:
-      10px 0 0 0 oklch(from var(--color-gold) l c h / 0.45),
-      0 -10px 0 0 oklch(from var(--color-gold) l c h / 0.45);
-  }
-
-  .fantasy-pixel-corner-br {
-    bottom: -2px;
-    right: -2px;
-    box-shadow:
-      -10px 0 0 0 oklch(from var(--color-gold) l c h / 0.45),
-      0 -10px 0 0 oklch(from var(--color-gold) l c h / 0.45);
   }
 
   .fantasy-header-ornament {
@@ -313,7 +305,7 @@
   }
 
   .prose-fantasy :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-    @apply bg-primary/10 px-1.5 py-0.5 font-pixel text-primary;
+    @apply bg-primary/10 px-1.5 py-0.5 font-mono text-primary;
     border-radius: 0;
   }
 
