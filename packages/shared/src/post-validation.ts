@@ -9,6 +9,17 @@ import type {
 const SLUG_PATTERN = /^[a-z0-9\u4e00-\u9fff]+(?:-[a-z0-9\u4e00-\u9fff]+)*$/;
 const MAX_CONTENT_LENGTH = 200_000;
 
+export const SEARCH_QUERY_MIN = 1;
+export const SEARCH_QUERY_MAX = 100;
+
+export function normalizeSearchQuery(value: string | undefined): string | null {
+  const trimmed = value?.trim() ?? '';
+  if (trimmed.length < SEARCH_QUERY_MIN || trimmed.length > SEARCH_QUERY_MAX) {
+    return null;
+  }
+  return trimmed;
+}
+
 function isPostStatus(value: unknown): value is PostStatus {
   return value === 'DRAFT' || value === 'PUBLISHED';
 }

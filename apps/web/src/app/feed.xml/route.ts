@@ -3,7 +3,7 @@ import { buildRssFeed } from '@lib/rss';
 import { SITE_DESCRIPTION, SITE_NAME } from '@lib/seo';
 import { getConfiguredSiteUrl } from '@lib/site-url';
 
-export const revalidate = 3600;
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
   const posts = await listPublishedPostsForFeed();

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import type { PostsQueryParams } from '@my-blog/shared'
+import type { PostsQueryParams, PostsSearchParams } from '@my-blog/shared'
 import { api } from '@/lib/api'
 
 export function usePosts(params?: PostsQueryParams) {
@@ -33,5 +33,14 @@ export function useTagPosts(slug: string, params?: PostsQueryParams) {
     queryFn: () => api.getTagPosts(slug, params),
     staleTime: 5 * 60 * 1000,
     enabled: Boolean(slug),
+  })
+}
+
+export function useSearchPosts(params: PostsSearchParams | null) {
+  return useQuery({
+    queryKey: ['search-posts', params],
+    queryFn: () => api.searchPosts(params!),
+    staleTime: 2 * 60 * 1000,
+    enabled: Boolean(params?.q.trim()),
   })
 }

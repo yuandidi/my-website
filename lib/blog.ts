@@ -4,6 +4,7 @@ import type {
   PostSummary,
   Tag,
 } from '@my-blog/shared';
+import { escapeLikePattern } from './search';
 import { getPostViewCountsBySlugs } from './analytics-store';
 import { query } from './db';
 
@@ -204,6 +205,52 @@ export interface FeedPost {
 export interface PostSitemapEntry {
   slug: string;
   updatedAt: string;
+}
+
+export async function searchPosts(options: {
+  q: string;
+  page: number;
+  limit: number;
+}): Promise<PaginatedResponse<PostSummary>> {
+  const { q, page, limit } = options;
+  const offset = (page - 1) * limit;
+  const pattern = `%${escapeLikePattern(q)}%`;
+  const searchClause = `(p.title ILIKE $1 ESCAPE '\\' OR COALESCE(p.excerpt, '') ILIKE $1 ESCAPE '\\')`;
+  const where = `${publishedClause} AND ${searchClause}`;
+
+  const countRows = await query<{ total: number }>(
+    `
+    SELECT COUNT(DISTINCT p.id)::int as total
+    ${postFrom}
+    WHERE ${where}
+    `,
+    [pattern],
+  );
+
+  const rows = await query<Record<string, unknown>>(
+    `
+    SELECT ${postSelect}
+    ${postFrom}
+    WHERE ${where}
+    GROUP BY p.id
+    ORDER BY p."publishedAt" DESC
+    LIMIT $2 OFFSET $3
+    `,
+    [pattern, limit, offset],
+  );
+
+  const total = countRows[0]?.total ?? 0;
+  const data = await attachViewCounts(rows.map(mapPostSummary));
+
+  return {
+    data,
+    meta: {
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit) || 1,
+    },
+  };
 }
 
 export async function listPublishedPostsForFeed(options?: {

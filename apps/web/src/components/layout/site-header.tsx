@@ -70,6 +70,15 @@ export function SiteHeader({ className }: SiteHeaderProps) {
             </Link>
           )}
           <Link
+            href={WEB_ROUTES.search}
+            className={cn(
+              'fantasy-nav-link',
+              pathname === WEB_ROUTES.search && 'fantasy-nav-link-active',
+            )}
+          >
+            搜索
+          </Link>
+          <Link
             href={WEB_ROUTES.blog}
             className={cn(
               'fantasy-nav-link',

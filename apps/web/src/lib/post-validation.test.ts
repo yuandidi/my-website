@@ -62,3 +62,19 @@ describe('validateUpdatePostInput', () => {
     ).toThrow(/content/)
   })
 })
+
+describe('normalizeSearchQuery', () => {
+  it('accepts trimmed queries within length limits', async () => {
+    const { normalizeSearchQuery } = await import('@my-blog/shared')
+    expect(normalizeSearchQuery('  hello  ')).toBe('hello')
+  })
+
+  it('rejects empty or overly long queries', async () => {
+    const { normalizeSearchQuery, SEARCH_QUERY_MAX } = await import(
+      '@my-blog/shared'
+    )
+    expect(normalizeSearchQuery('')).toBeNull()
+    expect(normalizeSearchQuery('   ')).toBeNull()
+    expect(normalizeSearchQuery('a'.repeat(SEARCH_QUERY_MAX + 1))).toBeNull()
+  })
+})

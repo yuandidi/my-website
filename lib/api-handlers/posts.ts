@@ -1,6 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import type { CreatePostInput, UpdatePostInput } from '@my-blog/shared';
-import { getPostBySlug, listPosts } from '../blog';
+import { normalizeSearchQuery } from '@my-blog/shared';
+import { getPostBySlug, listPosts, searchPosts } from '../blog';
 import {
   createPost,
   deletePost,
@@ -10,6 +11,7 @@ import {
 } from '../post-store';
 import { hasPostUpdates } from '../post-validation';
 import {
+  badRequest,
   getAuthUser,
   getQueryNumber,
   getQueryString,
@@ -37,6 +39,24 @@ export async function handlePostsRoute(
         await requireDeveloper(req);
         const body = await parseJsonBody<CreatePostInput>(req);
         return createPost(body);
+      },
+    });
+    return;
+  }
+
+  if (segments.length === 1 && segments[0] === 'search') {
+    await withMethods(req, res, {
+      GET: async () => {
+        const q = normalizeSearchQuery(getQueryString(req.query.q));
+        if (!q) {
+          badRequest(res, 'Search query must be 1-100 characters');
+          return;
+        }
+
+        const page = getQueryNumber(req.query.page, 1);
+        const limit = getQueryNumber(req.query.limit, 10);
+
+        return searchPosts({ q, page, limit: Math.min(limit, 50) });
       },
     });
     return;

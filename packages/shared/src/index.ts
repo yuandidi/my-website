@@ -78,6 +78,12 @@ export interface PostsQueryParams {
   tag?: string;
 }
 
+export interface PostsSearchParams {
+  q: string;
+  page?: number;
+  limit?: number;
+}
+
 export type UserRole = 'USER' | 'DEVELOPER' | 'ADMIN';
 
 export interface ProfileLink {
@@ -121,6 +127,7 @@ export interface UpdateProfileInput {
 
 export const API_ROUTES = {
   posts: '/posts',
+  postsSearch: '/posts/search',
   postsAdmin: '/posts/admin',
   postBySlug: (slug: string) => `/posts/${slug}`,
   tags: '/tags',
@@ -144,6 +151,7 @@ export const WEB_ROUTES = {
   home: '/',
   blog: '/blog',
   feed: '/feed.xml',
+  search: '/search',
   profile: '/profile',
   admin: '/admin',
   postsAdmin: '/admin/posts',
@@ -175,4 +183,7 @@ export {
   validateCreateTagInput,
   validateUpdatePostInput,
   validateUpdateTagInput,
+  normalizeSearchQuery,
+  SEARCH_QUERY_MAX,
+  SEARCH_QUERY_MIN,
 } from './post-validation';

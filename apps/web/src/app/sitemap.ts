@@ -3,7 +3,7 @@ import { WEB_ROUTES } from '@my-blog/shared';
 import { listPublishedPostSlugs, listTags } from '@lib/blog';
 import { getConfiguredSiteUrl } from '@lib/site-url';
 
-export const revalidate = 3600;
+export const dynamic = 'force-dynamic';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = getConfiguredSiteUrl();
@@ -24,6 +24,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 0.9,
+    },
+    {
+      url: `${siteUrl}${WEB_ROUTES.search}`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.7,
     },
     {
       url: `${siteUrl}${WEB_ROUTES.profile}`,

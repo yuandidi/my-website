@@ -3,6 +3,7 @@
 import { useEffect } from 'react'
 import Link from 'next/link'
 import { WEB_ROUTES } from '@my-blog/shared'
+import { GiscusComments } from '@/components/blog/giscus-comments'
 import { MarkdownContent } from '@/components/blog/markdown-content'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -94,6 +95,8 @@ export function PostDetailPage({ slug }: PostDetailPageProps) {
           <MarkdownContent content={post.content} />
         </div>
       </FantasyScroll>
+
+      <GiscusComments />
 
       <div className="mt-8 text-center">
         <Button asChild variant="outline">

@@ -10,6 +10,7 @@ import {
   type PostDetail,
   type PostSummary,
   type PostsQueryParams,
+  type PostsSearchParams,
   type SiteMetaResponse,
   type SiteProfile,
   type Tag,
@@ -74,6 +75,14 @@ function buildQuery(params?: PostsQueryParams) {
   return query ? `?${query}` : ''
 }
 
+function buildSearchQuery(params: PostsSearchParams) {
+  const search = new URLSearchParams()
+  search.set('q', params.q)
+  if (params.page) search.set('page', String(params.page))
+  if (params.limit) search.set('limit', String(params.limit))
+  return `?${search.toString()}`
+}
+
 export function getGithubLoginUrl() {
   return `${API_BASE}${API_ROUTES.auth.github}`
 }
@@ -82,6 +91,11 @@ export const api = {
   getPosts(params?: PostsQueryParams) {
     return request<PaginatedResponse<PostSummary>>(
       `${API_ROUTES.posts}${buildQuery(params)}`,
+    )
+  },
+  searchPosts(params: PostsSearchParams) {
+    return request<PaginatedResponse<PostSummary>>(
+      `${API_ROUTES.postsSearch}${buildSearchQuery(params)}`,
     )
   },
   getPost(slug: string) {
